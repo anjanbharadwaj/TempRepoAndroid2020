@@ -226,10 +226,9 @@ public class SchoolInfoActivity extends SlidingActivity{
                 Marker marker  = googleMap.addMarker(new MarkerOptions().position(position).title(markerText));
 
                 //zoom to position with level 16
-                CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(position, 5);
+                CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(position, 16);
                 googleMap.animateCamera(cameraUpdate);
 
-                
 
             }
         });
@@ -255,7 +254,29 @@ public class SchoolInfoActivity extends SlidingActivity{
         tmpOut.copyTo(outputBitmap);
         return outputBitmap;
     }
+    @Override
+    public void onResume() {
+        super.onResume();
+        mapView.onResume();
+    }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        mapView.onPause();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mapView.onDestroy();
+    }
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        mapView.onLowMemory();
+    }
     //this is a function that darkens an image to create a more aesthetic look/portray the cover as a background, not foreground
     private Bitmap darkenBitMap(Bitmap bm) {
 

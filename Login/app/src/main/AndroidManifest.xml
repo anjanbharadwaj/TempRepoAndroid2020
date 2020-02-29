@@ -19,7 +19,6 @@
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="@string/google_maps_key" />
 
-
         <activity android:name=".SchoolListActivity"></activity>
         <activity android:name=".SchoolInfoActivity"
             android:excludeFromRecents="true"
