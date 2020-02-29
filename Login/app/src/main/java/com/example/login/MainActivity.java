@@ -54,14 +54,14 @@ public class MainActivity extends AppCompatActivity {
                                         // Sign in success, update UI with the signed-in user's information
                                         Log.d(TAG, "signInWithEmail:success");
                                         FirebaseUser user = mAuth.getCurrentUser();
-                                        Toast.makeText(MainActivity.this, "Authentication success.",
+                                        Toast.makeText(MainActivity.this, "Login successful.",
                                                 Toast.LENGTH_SHORT).show();
-                                        Intent intent = new Intent(getApplicationContext(), SchoolInfoActivity.class);
+                                        Intent intent = new Intent(getApplicationContext(), SchoolListActivity.class);
                                         startActivity(intent);
                                     } else {
                                         // If sign in fails, display a message to the user.
                                         Log.w(TAG, "signInWithEmail:failure", task.getException());
-                                        Toast.makeText(MainActivity.this, "Authentication failed.",
+                                        Toast.makeText(MainActivity.this, "Login failed.",
                                                 Toast.LENGTH_SHORT).show();
                                     }
 
@@ -93,12 +93,14 @@ public class MainActivity extends AppCompatActivity {
                                         // Sign in success, update UI with the signed-in user's information
                                         Log.d(TAG, "createUserWithEmail:success");
                                         FirebaseUser user = mAuth.getCurrentUser();
-                                        Toast.makeText(MainActivity.this, "Authentication successful.",
+                                        Toast.makeText(MainActivity.this, "Registration successful.",
                                                 Toast.LENGTH_SHORT).show();
+                                        Intent intent = new Intent(getApplicationContext(), SchoolListActivity.class);
+                                        startActivity(intent);
                                     } else {
                                         // If sign in fails, display a message to the user.
                                         Log.w(TAG, "createUserWithEmail:failure", task.getException());
-                                        Toast.makeText(MainActivity.this, "Authentication failed.",
+                                        Toast.makeText(MainActivity.this, "Registration failed.",
                                                 Toast.LENGTH_SHORT).show();
                                     }
 

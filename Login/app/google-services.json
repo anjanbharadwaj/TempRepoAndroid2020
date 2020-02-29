@@ -30,6 +30,13 @@
             {
               "client_id": "333537459957-aphne0ag5h6nvrrdeahk5tc6jrldu06b.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "333537459957-90j68dbea4c2i5sim1g16lilp6dhmkqa.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "org.reactjs.native.example.OneSharedSchool"
+              }
             }
           ]
         }
