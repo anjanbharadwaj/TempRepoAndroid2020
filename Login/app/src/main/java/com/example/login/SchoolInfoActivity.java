@@ -50,6 +50,7 @@ import com.klinker.android.sliding.SlidingActivity;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
@@ -63,7 +64,7 @@ public class SchoolInfoActivity extends SlidingActivity{
     TextView detailManager;
     TextView detailManagerEmail;
     TextView detailManagerPhone;
-    ListView detailItemsListView;
+    ExpandedListView detailItemsListView;
     MapView mapView;
     GoogleMap map;
 
@@ -111,15 +112,42 @@ public class SchoolInfoActivity extends SlidingActivity{
         detailItemsListView = findViewById(R.id.detailItemsListView);
         mapView = findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
+        final String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        DatabaseReference favoritesRef = FirebaseDatabase.getInstance().getReference().child("Users").child(uid).child("Favorites");
+        favoritesRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Log.e("UID", uid);
+
+                Iterator i = dataSnapshot.getChildren().iterator();
+                while(i.hasNext()){
+                    String key = ((DataSnapshot)i.next()).getKey().toString();
+                    Log.e("KEY", key);
+                    Log.e("ID", school.id);
+
+                    if(key.equals(school.id)){
+                        detailFavorite.setRating(1);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
         detailFavorite.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             @Override
             public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
                 if(rating==1){
                     detailFavoriteLabel2.setText("This school will show up on your favorites list.");
+                    FirebaseDatabase.getInstance().getReference().child("Users").child(uid).child("Favorites").child(school.id).setValue("");
                 }
                 else{
                     detailFavoriteLabel2.setText("This school is not yet on your favorites list.");
-
+                    FirebaseDatabase.getInstance().getReference().child("Users").child(uid).child("Favorites").child(school.id).removeValue();
                 }
             }
         });

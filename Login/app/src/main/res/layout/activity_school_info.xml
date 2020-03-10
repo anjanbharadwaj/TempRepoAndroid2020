@@ -322,7 +322,7 @@ android:fillViewport="true">
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/detailitemsimage" />
 
-            <ListView
+            <com.example.login.ExpandedListView
                 android:id="@+id/detailItemsListView"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -337,7 +337,7 @@ android:fillViewport="true">
                 app:layout_constraintStart_toEndOf="@+id/detailItemsImageView"
                 app:layout_constraintTop_toBottomOf="@+id/detailItemsLabel">
 
-            </ListView>
+            </com.example.login.ExpandedListView>
 
             <TextView
                 android:id="@+id/detailItemsLabel"
