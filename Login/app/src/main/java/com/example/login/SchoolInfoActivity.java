@@ -238,7 +238,7 @@ public class SchoolInfoActivity extends SlidingActivity{
                 double longitude = Double.parseDouble(school.location.split(",")[1].substring(1));
 
 
-                Geocoder geocoder = new Geocoder(SchoolListActivity.c, Locale.getDefault());
+                Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
                 List<Address> addresses = null;
                 try {
                     addresses = geocoder.getFromLocation(latitude, longitude, 1);

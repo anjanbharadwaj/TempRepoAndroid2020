@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".HomeActivity">
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/coordinatorLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+
+    <FrameLayout
+        android:id="@+id/studentTeacherFrameLayout"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:context="com.example.congressionalappchallenge.bibliofly.StudentTeacher.StudentTeacherHomeActivity">
+
+
+<!--        <android.support.design.widget.AppBarLayout-->
+<!--            android:id="@+id/app_bar_layout"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:fitsSystemWindows="true">-->
+<!--            <android.support.design.widget.CollapsingToolbarLayout-->
+<!--                android:id="@+id/collapsing_toolbar"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="match_parent"-->
+<!--                android:fitsSystemWindows="true"-->
+<!--                app:contentScrim="?attr/colorPrimary"-->
+<!--                app:expandedTitleMarginEnd="64dp"-->
+<!--                app:expandedTitleMarginStart="15dp"-->
+<!--                app:layout_scrollFlags="scroll|exitUntilCollapsed">-->
+
+        <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+
+            <androidx.appcompat.widget.Toolbar
+                        android:id="@+id/toolbar"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="?attr/colorPrimary"
+                        android:elevation="6dp"
+                        android:minHeight="?attr/actionBarSize"
+                        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+                        app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+
+            <com.google.android.material.tabs.TabLayout
+                        android:id="@+id/tabLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/colorPrimary"
+                        android:elevation="6dp"
+                        app:tabSelectedTextColor="@android:color/white"
+                        app:tabTextColor="@android:color/white" />
+
+                    <androidx.viewpager.widget.ViewPager
+                        android:id="@+id/viewPager"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                    </androidx.viewpager.widget.ViewPager>
+
+
+                </LinearLayout>
+<!--            </android.support.design.widget.CollapsingToolbarLayout>-->
+<!--        </android.support.design.widget.AppBarLayout>-->
+
+        <com.arlib.floatingsearchview.FloatingSearchView
+            android:id="@+id/searchView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:floatingSearch_close_search_on_keyboard_dismiss="true"
+            app:floatingSearch_leftActionMode="showSearch"
+            app:floatingSearch_menu="@menu/menu_main"
+            app:floatingSearch_searchBarMarginLeft="4dp"
+            app:floatingSearch_searchBarMarginRight="4dp"
+            app:floatingSearch_searchBarMarginTop="4dp"
+            app:floatingSearch_searchHint="Search schools, users, and more..."
+            app:floatingSearch_showMenuAction="true"
+            app:floatingSearch_showSearchKey="false"
+            app:floatingSearch_showVoiceInput="true"
+            app:floatingSearch_suggestionsListAnimDuration="250"
+            app:floatingSearch_viewSearchInputTextColor="@color/black"
+            app:floatingSearch_viewSuggestionItemTextColor="@color/black"
+            app:floatingSearch_voiceRecHint="Voice Search"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+        </com.arlib.floatingsearchview.FloatingSearchView>
+
+
+    </FrameLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+
+<!--<?xml version="1.0" encoding="utf-8"?>-->
+<!--<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
+<!--    xmlns:app="http://schemas.android.com/apk/res-auto"-->
+<!--    xmlns:tools="http://schemas.android.com/tools"-->
+<!--    android:layout_width="match_parent"-->
+<!--    android:layout_height="match_parent"-->
+<!--    tools:context=".HomeActivity">-->
+
+<!--<androidx.coordinatorlayout.widget.CoordinatorLayout-->
+<!--    android:id="@+id/coordinatorLayout"-->
+<!--    android:layout_width="match_parent"-->
+<!--    android:layout_height="match_parent"-->
+<!--    app:layout_constraintBottom_toBottomOf="parent"-->
+<!--    app:layout_constraintEnd_toEndOf="parent"-->
+<!--    app:layout_constraintStart_toStartOf="parent"-->
+<!--    app:layout_constraintTop_toTopOf="parent">-->
+
+
+
+<!--</androidx.coordinatorlayout.widget.CoordinatorLayout>-->
+
+<!--<FrameLayout-->
+<!--    android:id="@+id/studentTeacherFrameLayout"-->
+<!--    android:layout_width="0dp"-->
+<!--    android:layout_height="0dp"-->
+<!--    android:orientation="vertical"-->
+<!--    app:layout_constraintBottom_toBottomOf="parent"-->
+<!--    app:layout_constraintLeft_toLeftOf="parent"-->
+<!--    app:layout_constraintRight_toRightOf="parent"-->
+<!--    app:layout_constraintTop_toTopOf="parent"-->
+<!--    tools:context="com.example.congressionalappchallenge.bibliofly.StudentTeacher.StudentTeacherHomeActivity">-->
+
+<!--    <LinearLayout-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent"-->
+<!--        android:orientation="vertical">-->
+
+<!--        <androidx.appcompat.widget.Toolbar-->
+<!--            android:id="@+id/toolbar"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:background="?attr/colorPrimary"-->
+<!--            android:elevation="6dp"-->
+<!--            android:minHeight="?attr/actionBarSize"-->
+<!--            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"-->
+<!--            app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />-->
+
+<!--        <com.google.android.material.tabs.TabLayout-->
+<!--            android:id="@+id/tabLayout"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:background="@color/colorPrimary"-->
+<!--            android:elevation="6dp"-->
+<!--            app:tabSelectedTextColor="@android:color/white"-->
+<!--            app:tabTextColor="@android:color/white" />-->
+
+<!--        <androidx.viewpager.widget.ViewPager-->
+<!--            android:id="@+id/viewPager"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent">-->
+
+<!--        </androidx.viewpager.widget.ViewPager>-->
+
+<!--    </LinearLayout>-->
+
+<!--    <com.arlib.floatingsearchview.FloatingSearchView-->
+<!--        android:id="@+id/searchView"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent"-->
+<!--        app:floatingSearch_close_search_on_keyboard_dismiss="true"-->
+<!--        app:floatingSearch_leftActionMode="showSearch"-->
+<!--        app:floatingSearch_menu="@menu/menu_main"-->
+<!--        app:floatingSearch_searchBarMarginLeft="4dp"-->
+<!--        app:floatingSearch_searchBarMarginRight="4dp"-->
+<!--        app:floatingSearch_searchBarMarginTop="4dp"-->
+<!--        app:floatingSearch_searchHint="Search schools"-->
+<!--        app:floatingSearch_showSearchKey="false"-->
+<!--        app:floatingSearch_showVoiceInput="true"-->
+<!--        app:floatingSearch_showMenuAction="true"-->
+<!--        app:floatingSearch_suggestionsListAnimDuration="250"-->
+<!--        app:floatingSearch_viewSearchInputTextColor="@color/black"-->
+<!--        app:floatingSearch_viewSuggestionItemTextColor="@color/black"-->
+<!--        app:floatingSearch_voiceRecHint="Voice Search"-->
+<!--        app:layout_constraintLeft_toLeftOf="parent"-->
+<!--        app:layout_constraintRight_toRightOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="parent">-->
+
+<!--    </com.arlib.floatingsearchview.FloatingSearchView>-->
+
+<!--</FrameLayout>-->
+
+<!--</androidx.constraintlayout.widget.ConstraintLayout>-->

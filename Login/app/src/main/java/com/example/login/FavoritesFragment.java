@@ -26,6 +26,7 @@ public class FavoritesFragment extends Fragment {
     public FavoritesFragment() {
         // Required empty public constructor
     }
+    public static String getName() { return "Favorites"; }
 
     public static FavoritesFragment newInstance(String param1, String param2) {
         FavoritesFragment fragment = new FavoritesFragment();

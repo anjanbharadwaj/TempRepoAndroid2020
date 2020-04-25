@@ -183,95 +183,95 @@ public class SchoolListActivity extends AppCompatActivity {
     public static String getName() { return "Explore"; }
 
 }
-
-class SchoolAdapter extends RecyclerView.Adapter<SchoolAdapter.SchoolViewHolder> {
-    private ArrayList<School> schools;
-    private RecyclerViewClickListener mListener;
-    //Default constructor
-    SchoolAdapter(ArrayList<School> schools, RecyclerViewClickListener listener) {
-        this.schools = schools;
-        mListener = listener;
-    }
-
-    @Override
-    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
-        super.onAttachedToRecyclerView(recyclerView);
-    }
-
-    @Override
-    public int getItemCount() {
-        return schools.size();
-    }
-
-    @Override
-    public void onBindViewHolder(SchoolViewHolder schoolViewHolder, int i) {
-        //Set each field to its corresponding attribute
-        School school = schools.get(i);
-        schoolViewHolder.name.setText(school.name);
-        double latitude = Double.parseDouble(school.location.split(",")[0]);
-        double longitude = Double.parseDouble(school.location.split(",")[1].substring(1));
-
-        Geocoder geocoder = new Geocoder(SchoolListActivity.c, Locale.getDefault());
-        List<Address> addresses = null;
-        try {
-            addresses = geocoder.getFromLocation(latitude, longitude, 1);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        String cityName = addresses.get(0).getLocality();
-//        String stateName = addresses.get(0).getAddressLine(1);
-        String countryName = addresses.get(0).getCountryName();
-
-        schoolViewHolder.location.setText(cityName + ", " + countryName);
-        schoolViewHolder.description.setText(school.description);
-        schoolViewHolder.fundsRaised.setMax(school.totalMoney);
-        schoolViewHolder.fundsRaised.setProgress(school.raisedMoney);
-
-        //Load the proper image into the imageView using the Glide framework
-        Glide.with(schoolViewHolder.itemView)
-                .load(school.imageUri)
-                .into(schoolViewHolder.schoolImage);
-    }
-
-    @Override
-    public SchoolViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-        //Inflate the view using the proper xml layout
-        View itemView = LayoutInflater.
-                from(viewGroup.getContext()).
-                inflate(R.layout.school_card, viewGroup, false);
-
-        return new SchoolViewHolder(itemView, mListener);
-    }
-
-    static class SchoolViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-
-        CardView cardView;
-        TextView name;
-        TextView location;
-        TextView description;
-        ProgressBar fundsRaised;
-        ImageView schoolImage;
-
-        private RecyclerViewClickListener mListener;
-
-        SchoolViewHolder(View v, RecyclerViewClickListener mListener) {
-            super(v);
-            //instantiation of views
-            cardView = (CardView)       v.findViewById(R.id.cardView);
-            name =  (TextView)         v.findViewById(R.id.schoolName);
-            location = (TextView)         v.findViewById(R.id.schoolLocation);
-            description = (TextView)    v.findViewById(R.id.schoolDescription);
-            fundsRaised = (ProgressBar)     v.findViewById(R.id.schoolFundsRaised);
-            schoolImage = (ImageView)     v.findViewById(R.id.schoolImageView);
-
-            this.mListener = mListener;
-            v.setOnClickListener(this);
-        }
-
-        @Override
-        public void onClick(View v) {
-            mListener.onClick(v, getAdapterPosition());
-        }
-    }
-}
+//
+//class SchoolAdapter extends RecyclerView.Adapter<SchoolAdapter.SchoolViewHolder> {
+//    private ArrayList<School> schools;
+//    private RecyclerViewClickListener mListener;
+//    //Default constructor
+//    SchoolAdapter(ArrayList<School> schools, RecyclerViewClickListener listener) {
+//        this.schools = schools;
+//        mListener = listener;
+//    }
+//
+//    @Override
+//    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+//        super.onAttachedToRecyclerView(recyclerView);
+//    }
+//
+//    @Override
+//    public int getItemCount() {
+//        return schools.size();
+//    }
+//
+//    @Override
+//    public void onBindViewHolder(SchoolViewHolder schoolViewHolder, int i) {
+//        //Set each field to its corresponding attribute
+//        School school = schools.get(i);
+//        schoolViewHolder.name.setText(school.name);
+//        double latitude = Double.parseDouble(school.location.split(",")[0]);
+//        double longitude = Double.parseDouble(school.location.split(",")[1].substring(1));
+//
+//        Geocoder geocoder = new Geocoder(SchoolListActivity.c, Locale.getDefault());
+//        List<Address> addresses = null;
+//        try {
+//            addresses = geocoder.getFromLocation(latitude, longitude, 1);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//
+//        String cityName = addresses.get(0).getLocality();
+////        String stateName = addresses.get(0).getAddressLine(1);
+//        String countryName = addresses.get(0).getCountryName();
+//
+//        schoolViewHolder.location.setText(cityName + ", " + countryName);
+//        schoolViewHolder.description.setText(school.description);
+//        schoolViewHolder.fundsRaised.setMax(school.totalMoney);
+//        schoolViewHolder.fundsRaised.setProgress(school.raisedMoney);
+//
+//        //Load the proper image into the imageView using the Glide framework
+//        Glide.with(schoolViewHolder.itemView)
+//                .load(school.imageUri)
+//                .into(schoolViewHolder.schoolImage);
+//    }
+//
+//    @Override
+//    public SchoolViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
+//        //Inflate the view using the proper xml layout
+//        View itemView = LayoutInflater.
+//                from(viewGroup.getContext()).
+//                inflate(R.layout.school_card, viewGroup, false);
+//
+//        return new SchoolViewHolder(itemView, mListener);
+//    }
+//
+//    static class SchoolViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+//
+//        CardView cardView;
+//        TextView name;
+//        TextView location;
+//        TextView description;
+//        ProgressBar fundsRaised;
+//        ImageView schoolImage;
+//
+//        private RecyclerViewClickListener mListener;
+//
+//        SchoolViewHolder(View v, RecyclerViewClickListener mListener) {
+//            super(v);
+//            //instantiation of views
+//            cardView = (CardView)       v.findViewById(R.id.cardView);
+//            name =  (TextView)         v.findViewById(R.id.schoolName);
+//            location = (TextView)         v.findViewById(R.id.schoolLocation);
+//            description = (TextView)    v.findViewById(R.id.schoolDescription);
+//            fundsRaised = (ProgressBar)     v.findViewById(R.id.schoolFundsRaised);
+//            schoolImage = (ImageView)     v.findViewById(R.id.schoolImageView);
+//
+//            this.mListener = mListener;
+//            v.setOnClickListener(this);
+//        }
+//
+//        @Override
+//        public void onClick(View v) {
+//            mListener.onClick(v, getAdapterPosition());
+//        }
+//    }
+//}
