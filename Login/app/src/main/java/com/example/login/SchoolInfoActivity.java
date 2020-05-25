@@ -1,7 +1,6 @@
 package com.example.login;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -14,7 +13,6 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.location.Address;
 import android.location.Geocoder;
-import android.net.Uri;
 import android.os.Bundle;
 import android.renderscript.Allocation;
 import android.renderscript.Element;
@@ -23,12 +21,10 @@ import android.renderscript.ScriptIntrinsicBlur;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
-import androidx.palette.*;
 import androidx.palette.graphics.Palette;
 
 
@@ -62,8 +58,8 @@ public class SchoolInfoActivity extends SlidingActivity{
     TextView detailFavoriteLabel2;
     RatingBar detailFavorite;
     TextView detailManager;
-    TextView detailManagerEmail;
-    TextView detailManagerPhone;
+    TextView detailManagerClickToViewMore;
+    TextView detailManagerName;
     ExpandedListView detailItemsListView;
     MapView mapView;
     GoogleMap map;
@@ -100,15 +96,14 @@ public class SchoolInfoActivity extends SlidingActivity{
         }
 
         setContent(R.layout.activity_school_info);
-
-        detailDescription = findViewById(R.id.detailDescription);
+        detailManagerName = findViewById(R.id.detailManagerName);
+        detailDescription = findViewById(R.id.nameEditText);
         detailFundingLabel = findViewById(R.id.detailFundingLabel);
         detailFundingProgressBar = findViewById(R.id.detailFundingProgressBar);
         detailFavoriteLabel2 = findViewById(R.id.detailFavoriteLabel2);
         detailFavorite = findViewById(R.id.detailFavorite);
         detailManager = findViewById(R.id.detailManager);
-        detailManagerEmail = findViewById(R.id.detailManagerEmail);
-        detailManagerPhone = findViewById(R.id.detailManagerPhone);
+        detailManagerClickToViewMore = findViewById(R.id.detailManagerClickToViewMore);
         detailItemsListView = findViewById(R.id.detailItemsListView);
         mapView = findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
@@ -151,30 +146,12 @@ public class SchoolInfoActivity extends SlidingActivity{
                 }
             }
         });
-        detailManagerEmail.setOnClickListener(new View.OnClickListener() {
+        detailManagerClickToViewMore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String emailaddress = detailManagerEmail.getText().toString();
-                if(emailaddress.length() > 0) {
-                    Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
-                            "mailto", emailaddress, null));
-                    emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Subject");
-                    emailIntent.putExtra(Intent.EXTRA_TEXT, "Body");
-                    emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{emailaddress}); // String[] addresses
-
-                    startActivity(Intent.createChooser(emailIntent, "Send email..."));
-                }
-            }
-        });
-        detailManagerPhone.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(Intent.ACTION_DIAL);
-                String phonenum = detailManagerPhone.getText().toString();
-                if(phonenum.length()>0) {
-                    intent.setData(Uri.parse("tel:" +phonenum));
-                    startActivity(intent);
-                }
+                Intent intent = new Intent(getApplicationContext(), ViewOtherProfileActivity.class);
+                intent.putExtra("UID",school.organizerID);
+                startActivity(intent);
             }
         });
         detailDescription.setText(school.description);
@@ -187,33 +164,30 @@ public class SchoolInfoActivity extends SlidingActivity{
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 String managername = dataSnapshot.child("name").getValue().toString();
-                String manageremail = dataSnapshot.child("email").getValue().toString();
-                String managerphone = dataSnapshot.child("phone").getValue().toString();
-                int showpublic = Integer.parseInt(dataSnapshot.child("ShowPublic").getValue().toString());
-                detailManagerEmail.setText("");
-                detailManagerPhone.setText("");
 
-                switch(showpublic) {
-                    case 0:
-                        detailManager.setText(managername);
-                        break;
-                    case 1:
-                        detailManager.setText(managername);
-                        detailManagerEmail.setText(manageremail);
-                        break;
-                    case 2:
-                        detailManager.setText(managername);
-                        detailManagerPhone.setText(managerphone);
-                        break;
-                    case 3:
-                        detailManager.setText(managername);
-                        detailManagerEmail.setText(manageremail);
-                        detailManagerPhone.setText(managerphone);
-                        break;
-                    default:
-                        detailManager.setText(managername);
-                        break;
-                }
+                detailManagerName.setText(managername);
+
+//                switch(showpublic) {
+//                    case 0:
+//                        detailManager.setText(managername);
+//                        break;
+//                    case 1:
+//                        detailManager.setText(managername);
+//                        detailManagerEmail.setText(manageremail);
+//                        break;
+//                    case 2:
+//                        detailManager.setText(managername);
+//                        detailManagerPhone.setText(managerphone);
+//                        break;
+//                    case 3:
+//                        detailManager.setText(managername);
+//                        detailManagerEmail.setText(manageremail);
+//                        detailManagerPhone.setText(managerphone);
+//                        break;
+//                    default:
+//                        detailManager.setText(managername);
+//                        break;
+//                }
 
 
 

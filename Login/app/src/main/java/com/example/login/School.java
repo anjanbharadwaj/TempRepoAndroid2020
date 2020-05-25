@@ -21,7 +21,9 @@ public class School implements SearchSuggestion {
 
 
     public ArrayList<String> items;
+    public School(){
 
+    }
     public School(String id, String name, String imageUri, String location, int raisedMoney, int totalMoney, String description, String organizerID, ArrayList<String> items) {
         this.id = id;
         this.name = name;
@@ -32,6 +34,7 @@ public class School implements SearchSuggestion {
         this.description = description;
         this.organizerID = organizerID;
         this.items = items;
+        this.items.remove(0);
     }
 
     public School(Parcel parcel){
@@ -44,9 +47,11 @@ public class School implements SearchSuggestion {
         this.description = parcel.readString();
         this.organizerID = parcel.readString();
         this.items = parcel.readArrayList(String.class.getClassLoader());//new ArrayList<>();
+        this.items.remove(0);
     }
     public String toString() {
-        return name;
+
+        return id + " " + name + " " + imageUri+ " " +location+ " " +raisedMoney+ " " +totalMoney+ " " +description+ " " +organizerID+ " " +items.toString() ;
     }
 
 
@@ -73,7 +78,7 @@ public class School implements SearchSuggestion {
         dest.writeList(items);//.writeStringList(items);
     }
 
-    //Required field for the interface to be able to create a new Book object from a passed in parcel
+    //Required field for the interface to be able to create a new School object from a passed in parcel
     public static final Parcelable.Creator<School> CREATOR = new Parcelable.Creator<School>() {
 
         @Override

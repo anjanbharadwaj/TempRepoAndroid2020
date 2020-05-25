@@ -48,7 +48,7 @@ android:fillViewport="true">
         android:paddingRight="12dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/detailDescriptionCardView">
+        app:layout_constraintTop_toBottomOf="@+id/nameEditCardView">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -184,26 +184,26 @@ android:fillViewport="true">
             android:layout_height="wrap_content">
 
             <TextView
-                android:id="@+id/detailManagerEmail"
+                android:id="@+id/detailManagerName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="24dp"
                 android:layout_marginTop="4dp"
-                android:text="Manager Email"
+                android:text="Name Name"
                 app:layout_constraintLeft_toRightOf="@+id/detailManagerImageView"
                 app:layout_constraintTop_toBottomOf="@+id/detailManager" />
 
             <TextView
-                android:id="@+id/detailManagerPhone"
+                android:id="@+id/detailManagerClickToViewMore"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="24dp"
                 android:layout_marginTop="4dp"
-                android:layout_marginBottom="12dp"
-                android:text="Manager Phone"
+                android:layout_marginBottom="8dp"
+                android:text="Click to view profile"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toRightOf="@+id/detailManagerImageView"
-                app:layout_constraintTop_toBottomOf="@+id/detailManagerEmail" />
+                app:layout_constraintTop_toBottomOf="@+id/detailManagerName" />
 
             <TextView
                 android:id="@+id/detailManager"
@@ -211,7 +211,7 @@ android:fillViewport="true">
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="24dp"
                 android:layout_marginTop="12dp"
-                android:text="Manager Manager"
+                android:text="School Manager"
                 android:textAppearance="@style/TextAppearance.AppCompat.SearchResult.Subtitle"
                 app:layout_constraintLeft_toRightOf="@+id/detailManagerImageView"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -233,7 +233,7 @@ android:fillViewport="true">
     </androidx.cardview.widget.CardView>
 
     <androidx.cardview.widget.CardView
-        android:id="@+id/detailDescriptionCardView"
+        android:id="@+id/nameEditCardView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
@@ -251,7 +251,7 @@ android:fillViewport="true">
             android:layout_height="wrap_content">
 
             <TextView
-                android:id="@+id/detailDescription"
+                android:id="@+id/nameEditText"
                 android:layout_width="312dp"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
@@ -265,11 +265,11 @@ android:fillViewport="true">
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/detailDescriptionDivider"
+                app:layout_constraintTop_toBottomOf="@+id/nameEditDivider"
                 app:layout_constraintVertical_bias="0.0" />
 
             <TextView
-                android:id="@+id/detailDescriptionLabel"
+                android:id="@+id/nameEditLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"
@@ -281,12 +281,12 @@ android:fillViewport="true">
                 app:layout_constraintTop_toTopOf="parent" />
 
             <View
-                android:id="@+id/detailDescriptionDivider"
+                android:id="@+id/nameEditDivider"
                 style="@style/Divider"
                 android:layout_width="0dp"
                 android:layout_marginTop="12dp"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/detailDescriptionLabel" />
+                app:layout_constraintTop_toBottomOf="@+id/nameEditLabel" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.cardview.widget.CardView>

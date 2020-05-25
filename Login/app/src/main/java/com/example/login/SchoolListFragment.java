@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -155,27 +156,10 @@ public class SchoolListFragment extends Fragment implements ObservableScrollView
                 listOfSchools.clear();
                 recyclerView.setVisibility(View.INVISIBLE);
                 progressBar.setVisibility(View.VISIBLE);
-                //Iterate through all children in the Books root to get information for each ISBN
-                Iterator i = dataSnapshot.getChildren().iterator();
-                while(i.hasNext()){
-
-                    String schoolID = ((DataSnapshot) i.next()).getKey();
-                    //Get the ISBN from the key of the child, and then proceed to find the title, author, description, image url, and rating
-                    String name = ((dataSnapshot).child(schoolID).child("Name").getValue().toString());
-
-                    String location = ((dataSnapshot).child(schoolID).child("Location").getValue().toString());
-                    int funding_goal = Integer.parseInt(((dataSnapshot).child(schoolID).child("Funding Goal").getValue().toString()));
-                    int raised = Integer.parseInt(((dataSnapshot).child(schoolID).child("Raised").getValue().toString()));
-                    String donation_manager_id = ((dataSnapshot).child(schoolID).child("Donation Manager").getValue().toString());
-                    String uri = ((dataSnapshot).child(schoolID).child("ImageURI").getValue().toString());
-                    String description = ((dataSnapshot).child(schoolID).child("Description").getValue().toString());
-                    Iterator j = (dataSnapshot).child(schoolID).child("Items").getChildren().iterator();
-                    ArrayList<String> items = new ArrayList<>();
-                    while(j.hasNext()){
-                        items.add(((DataSnapshot) j.next()).getValue().toString());
-                    }
-
-                    listOfSchools.add(new School(schoolID, name, uri, location, raised, funding_goal, description, donation_manager_id, items));
+                for(DataSnapshot ds: dataSnapshot.getChildren()){
+                    School school = ds.getValue(School.class);
+                    listOfSchools.add(school);
+                    Log.e("School", school.toString());
                 }
 
                 showCards();
@@ -190,6 +174,7 @@ public class SchoolListFragment extends Fragment implements ObservableScrollView
         });
         swipeRefreshLayout.setRefreshing(false);
     }
+
 
 
     public static String getName() { return "Explore"; }

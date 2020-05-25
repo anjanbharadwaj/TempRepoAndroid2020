@@ -1,24 +1,16 @@
 package com.example.login;
 
-import android.content.Context;
-import android.content.Intent;
-import android.graphics.Typeface;
-import android.net.Uri;
-import android.os.Bundle;
-
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.widget.Toolbar;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 
+import android.content.Context;
+import android.graphics.Typeface;
+import android.os.Bundle;
 import android.text.SpannableString;
 import android.text.style.StyleSpan;
-import android.view.LayoutInflater;
+import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -34,12 +26,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.mikhaellopez.circularimageview.CircularImageView;
 
-
-public class ProfileFragment extends Fragment {
-
-    private OnFragmentInteractionListener mListener;
-    static FragmentActivity activity;
-
+public class ViewOtherProfileActivity extends AppCompatActivity {
     static TextView name;
     static TextView bio;
     static TextView about;
@@ -48,124 +35,107 @@ public class ProfileFragment extends Fragment {
     static TextView location;
     static TextView language;
     static TextView school;
-    static ImageButton editProfile;
+
     static ConstraintLayout phoneLayout;
     static ConstraintLayout emailLayout;
     static ConstraintLayout locationLayout;
     static ConstraintLayout languageLayout;
     static ConstraintLayout schoolLayout;
     static CircularImageView profilePic;
+
     static DatabaseReference profileRoot;
 
-    public ProfileFragment() {
-        // Required empty public constructor
-    }
-
-
-
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        activity = getActivity();
+        setContentView(R.layout.fragment_profile);
+        ImageButton addFriend = findViewById(R.id.edit_or_add_button);
+        addFriend.setImageResource(R.drawable.add_friend_icon);
         profileRoot = FirebaseDatabase.getInstance().getReference().child("Users");
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-
-        return inflater.inflate(R.layout.fragment_profile, container, false);
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-        editProfile = view.findViewById(R.id.edit_or_add_button);
-        editProfile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity().getApplicationContext(), EditProfileActivity.class);
-                startActivity(intent);
-            }
-        });
-
-        name = view.findViewById(R.id.name);
-        about = view.findViewById(R.id.aboutLabel);
-        bio = view.findViewById(R.id.bio);
-        phone = view.findViewById(R.id.phoneValue);
-        email = view.findViewById(R.id.emailValue);
-        location = view.findViewById(R.id.locationValue);
-        language = view.findViewById(R.id.languageValue);
-        school = view.findViewById(R.id.schoolValue);
 
 
-        phoneLayout = view.findViewById(R.id.phoneConstraint);
-        emailLayout = view.findViewById(R.id.emailConstraint);
-        locationLayout = view.findViewById(R.id.locationConstraint);
-        languageLayout = view.findViewById(R.id.languageConstraint);
-        schoolLayout = view.findViewById(R.id.schoolConstraint);
-        profilePic = view.findViewById(R.id.profilePic);
+        profilePic = findViewById(R.id.profilePic);
 
-        loadProfileInfo(getActivity().getApplicationContext(), FirebaseAuth.getInstance().getCurrentUser().getUid().toString());
+        name = findViewById(R.id.name);
+        about = findViewById(R.id.aboutLabel);
+        bio = findViewById(R.id.bio);
+        phone = findViewById(R.id.phoneValue);
+        email = findViewById(R.id.emailValue);
+        location = findViewById(R.id.locationValue);
+        language = findViewById(R.id.languageValue);
+        school = findViewById(R.id.schoolValue);
+
+
+        phoneLayout = findViewById(R.id.phoneConstraint);
+        emailLayout = findViewById(R.id.emailConstraint);
+        locationLayout = findViewById(R.id.locationConstraint);
+        languageLayout = findViewById(R.id.languageConstraint);
+        schoolLayout = findViewById(R.id.schoolConstraint);
+
+        String uid = getIntent().getStringExtra("UID").toString();
+        loadProfileInfo(getApplicationContext(), uid);
     }
 
 
     public static void loadProfileInfo(Context c, String uid){
-        StorageReference reference = FirebaseStorage.getInstance().getReference().child("Users").child(uid);
-        GlideApp.with(c).load(reference).apply(new RequestOptions()
-                .diskCacheStrategy(DiskCacheStrategy.NONE)
-                .skipMemoryCache(true).circleCrop()).into(profilePic);
-
+        try {
+            StorageReference reference = FirebaseStorage.getInstance().getReference().child("Users").child(uid);
+            GlideApp.with(c).load(reference).apply(new RequestOptions()
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .skipMemoryCache(true).circleCrop()).into(profilePic);
+        }
+        catch(Exception e){
+            Log.e("ProfInfo", "failed");
+        }
         profileRoot.child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Log.e("ProfInfo", "on data change");
                 String name = dataSnapshot.child("name").getValue().toString();
-                ProfileFragment.name.setText(name);
+                ViewOtherProfileActivity.name.setText(name);
 
                 String bio = null;
                 try {
                     bio = dataSnapshot.child("bio").getValue().toString();
-                    ProfileFragment.bio.setText(bio);
+                    ViewOtherProfileActivity.bio.setText(bio);
                 } catch (Exception e) {
-                    ProfileFragment.bio.setText("");
+                    ViewOtherProfileActivity.bio.setText("");
                 }
                 String phone = null;
                 try {
                     phone = dataSnapshot.child("phone").getValue().toString();
-                    ProfileFragment.phone.setText(phone);
+                    ViewOtherProfileActivity.phone.setText(phone);
                 } catch (Exception e) {
-                    ProfileFragment.phoneLayout.setVisibility(View.GONE);
+                    ViewOtherProfileActivity.phoneLayout.setVisibility(View.GONE);
                 }
                 String email = null;
                 try {
                     email = dataSnapshot.child("email").getValue().toString();
-                    ProfileFragment.email.setText(email);
+                    ViewOtherProfileActivity.email.setText(email);
                 } catch (Exception e) {
-                    ProfileFragment.emailLayout.setVisibility(View.GONE);
+                    ViewOtherProfileActivity.emailLayout.setVisibility(View.GONE);
                 }
                 String location = null;
                 try {
                     location = dataSnapshot.child("location").getValue().toString();
-                    ProfileFragment.location.setText("From ");
+                    ViewOtherProfileActivity.location.setText("From ");
                     SpannableString locationBold = new SpannableString(location);
                     locationBold.setSpan(new StyleSpan(Typeface.BOLD), 0, locationBold.length(), 0);
 
-                    ProfileFragment.location.append(locationBold);
+                    ViewOtherProfileActivity.location.append(locationBold);
                 } catch (Exception e) {
-                    ProfileFragment.locationLayout.setVisibility(View.GONE);
+                    ViewOtherProfileActivity.locationLayout.setVisibility(View.GONE);
                 }
                 String language = null;
                 try {
                     language = dataSnapshot.child("language").getValue().toString();
-                    ProfileFragment.language.setText("Speaks ");
+                    ViewOtherProfileActivity.language.setText("Speaks ");
                     SpannableString languageBold =  new SpannableString(language);
                     languageBold.setSpan(new StyleSpan(Typeface.BOLD), 0, languageBold.length(), 0);
 
-                    ProfileFragment.language.append(languageBold);
+                    ViewOtherProfileActivity.language.append(languageBold);
                 } catch (Exception e) {
-                    ProfileFragment.languageLayout.setVisibility(View.GONE);
+                    ViewOtherProfileActivity.languageLayout.setVisibility(View.GONE);
                 }
                 String school = null;
                 try {
@@ -173,10 +143,8 @@ public class ProfileFragment extends Fragment {
                     getSchoolName(school);
 
                 } catch (Exception e) {
-                    ProfileFragment.schoolLayout.setVisibility(View.GONE);
+                    ViewOtherProfileActivity.schoolLayout.setVisibility(View.GONE);
                 }
-
-
 
 
             }
@@ -207,27 +175,5 @@ public class ProfileFragment extends Fragment {
             }
         });
     }
-    public static String getName() { return "Profile"; }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
-
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
-    }
 }

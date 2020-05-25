@@ -63,8 +63,7 @@ public class HomeActivity extends AppCompatActivity implements SchoolListFragmen
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference ref = database.getReference();
     FloatingSearchView searchView;
-//    MaterialSearchView materialSearchView;
-//    SearchView searchView;
+
     static ArrayList<School> suggestions = new ArrayList<>();
     static ArrayList<String> list = new ArrayList<String>();
     int position;
@@ -88,23 +87,16 @@ public class HomeActivity extends AppCompatActivity implements SchoolListFragmen
             public void onDataChange(DataSnapshot dataSnapshot) {
                 suggestions.clear();
                 for (DataSnapshot d : dataSnapshot.getChildren()) {
-                    String id = d.getKey();
-                    String name = d.child("Name").getValue(String.class);
-                    String location = d.child("Location").getValue(String.class);
-                    String organizerID = d.child("Donation Manager").getValue(String.class);
-                    String description = d.child("Description").getValue(String.class);
-                    int raisedMoney = d.child("Raised").getValue(Integer.class);
-                    int totalMoney = d.child("Funding Goal").getValue(Integer.class);
-                    String imageUri = d.child("ImageURI").getValue(String.class);
-                    ArrayList<String> items = new ArrayList<>();
-                    ArrayList<String> itemsClone = new ArrayList<>();
-
-                    Iterator i = d.child("Items").getChildren().iterator();
-                    while(i.hasNext()){
-                        String s = i.next().toString();
-                        items.add(s);
-                        itemsClone.add(s);
-                    }
+                    School school = d.getValue(School.class);
+                    String id = school.id;
+                    String name = school.name;
+                    String location = school.location;
+                    String organizerID = school.organizerID;
+                    String description = school.description;
+                    int raisedMoney = school.raisedMoney;
+                    int totalMoney = school.totalMoney;
+                    String imageUri = school.imageUri;
+                    ArrayList<String> items = school.items;
 
                     String lQuery = newQuery.toLowerCase();
                     StringTokenizer st = new StringTokenizer(lQuery);
