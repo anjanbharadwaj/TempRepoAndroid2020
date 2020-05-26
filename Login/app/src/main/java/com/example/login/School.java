@@ -54,6 +54,26 @@ public class School implements SearchSuggestion {
         return id + " " + name + " " + imageUri+ " " +location+ " " +raisedMoney+ " " +totalMoney+ " " +description+ " " +organizerID+ " " +items.toString() ;
     }
 
+    public static final Parcelable.Creator<School> CREATOR = new Parcelable.Creator<School>() {
+
+        @Override
+        public School createFromParcel(Parcel parcel) {
+            return new School(parcel);
+        }
+
+        @Override
+        public School[] newArray(int size) {
+            return new School[0];
+        }
+    };
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj.getClass() != this.getClass()) return false;
+        School s = (School) obj;
+
+        return id.equals(s.id);
+    }
 
     @Override
     public String getBody() {
@@ -79,25 +99,5 @@ public class School implements SearchSuggestion {
     }
 
     //Required field for the interface to be able to create a new School object from a passed in parcel
-    public static final Parcelable.Creator<School> CREATOR = new Parcelable.Creator<School>() {
-
-        @Override
-        public School createFromParcel(Parcel parcel) {
-            return new School(parcel);
-        }
-
-        @Override
-        public School[] newArray(int size) {
-            return new School[0];
-        }
-    };
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj.getClass() != this.getClass()) return false;
-        School s = (School) obj;
-
-        return id.equals(s.id);
-    }
 
 }

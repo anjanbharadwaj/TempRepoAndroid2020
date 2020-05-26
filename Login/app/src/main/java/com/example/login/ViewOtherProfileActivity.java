@@ -42,16 +42,61 @@ public class ViewOtherProfileActivity extends AppCompatActivity {
     static ConstraintLayout languageLayout;
     static ConstraintLayout schoolLayout;
     static CircularImageView profilePic;
+    static ImageButton addFriend;
+    static DatabaseReference profileRoot =  FirebaseDatabase.getInstance().getReference().child("Users");;
+    static DatabaseReference myFriends = profileRoot.child(FirebaseAuth.getInstance().getUid().toString()).child("friendUIDs");
+    boolean alreadyFriends = false;
 
-    static DatabaseReference profileRoot;
+    public void toggleIcon(){
+        if(alreadyFriends){
+            addFriend.setImageResource(R.drawable.remove_friend_icon);
+        } else {
+            addFriend.setImageResource(R.drawable.add_friend_icon);
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_profile);
-        ImageButton addFriend = findViewById(R.id.edit_or_add_button);
+        final String uid = getIntent().getStringExtra("UID").toString();
+
+        addFriend = findViewById(R.id.edit_or_add_button);
         addFriend.setImageResource(R.drawable.add_friend_icon);
-        profileRoot = FirebaseDatabase.getInstance().getReference().child("Users");
+
+
+        myFriends.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.hasChild(uid)){
+                    alreadyFriends=true;
+                    toggleIcon();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+
+        addFriend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(alreadyFriends){
+                    alreadyFriends=false;
+                    myFriends.child(uid).removeValue();
+                    toggleIcon();
+                } else {
+                    alreadyFriends=true;
+                    myFriends.child(uid).setValue(true);
+                    toggleIcon();
+
+                }
+            }
+        });
+
 
 
         profilePic = findViewById(R.id.profilePic);
@@ -72,7 +117,6 @@ public class ViewOtherProfileActivity extends AppCompatActivity {
         languageLayout = findViewById(R.id.languageConstraint);
         schoolLayout = findViewById(R.id.schoolConstraint);
 
-        String uid = getIntent().getStringExtra("UID").toString();
         loadProfileInfo(getApplicationContext(), uid);
     }
 
@@ -90,34 +134,35 @@ public class ViewOtherProfileActivity extends AppCompatActivity {
         profileRoot.child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Log.e("ProfInfo", "on data change");
-                String name = dataSnapshot.child("name").getValue().toString();
+                User u = dataSnapshot.getValue(User.class);
+
+                String name = u.name;
                 ViewOtherProfileActivity.name.setText(name);
 
                 String bio = null;
                 try {
-                    bio = dataSnapshot.child("bio").getValue().toString();
+                    bio = u.bio;
                     ViewOtherProfileActivity.bio.setText(bio);
                 } catch (Exception e) {
                     ViewOtherProfileActivity.bio.setText("");
                 }
                 String phone = null;
                 try {
-                    phone = dataSnapshot.child("phone").getValue().toString();
+                    phone = u.phone;
                     ViewOtherProfileActivity.phone.setText(phone);
                 } catch (Exception e) {
                     ViewOtherProfileActivity.phoneLayout.setVisibility(View.GONE);
                 }
                 String email = null;
                 try {
-                    email = dataSnapshot.child("email").getValue().toString();
+                    email = u.email;
                     ViewOtherProfileActivity.email.setText(email);
                 } catch (Exception e) {
                     ViewOtherProfileActivity.emailLayout.setVisibility(View.GONE);
                 }
                 String location = null;
                 try {
-                    location = dataSnapshot.child("location").getValue().toString();
+                    location = u.location;
                     ViewOtherProfileActivity.location.setText("From ");
                     SpannableString locationBold = new SpannableString(location);
                     locationBold.setSpan(new StyleSpan(Typeface.BOLD), 0, locationBold.length(), 0);
@@ -128,7 +173,7 @@ public class ViewOtherProfileActivity extends AppCompatActivity {
                 }
                 String language = null;
                 try {
-                    language = dataSnapshot.child("language").getValue().toString();
+                    language = u.language;
                     ViewOtherProfileActivity.language.setText("Speaks ");
                     SpannableString languageBold =  new SpannableString(language);
                     languageBold.setSpan(new StyleSpan(Typeface.BOLD), 0, languageBold.length(), 0);
@@ -139,7 +184,7 @@ public class ViewOtherProfileActivity extends AppCompatActivity {
                 }
                 String school = null;
                 try {
-                    school = dataSnapshot.child("school").getValue().toString();
+                    school = u.school;
                     getSchoolName(school);
 
                 } catch (Exception e) {

@@ -15,6 +15,7 @@ import androidx.fragment.app.FragmentActivity;
 
 import android.text.SpannableString;
 import android.text.style.StyleSpan;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -87,7 +88,7 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity().getApplicationContext(), EditProfileActivity.class);
-                startActivity(intent);
+                startActivityForResult(intent, 1);
             }
         });
 
@@ -111,6 +112,15 @@ public class ProfileFragment extends Fragment {
         loadProfileInfo(getActivity().getApplicationContext(), FirebaseAuth.getInstance().getCurrentUser().getUid().toString());
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode==1){
+            String uid = FirebaseAuth.getInstance().getCurrentUser().getUid().toString();
+            loadProfileInfo(getContext(), uid);
+        }
+
+    }
 
     public static void loadProfileInfo(Context c, String uid){
         StorageReference reference = FirebaseStorage.getInstance().getReference().child("Users").child(uid);
@@ -121,33 +131,36 @@ public class ProfileFragment extends Fragment {
         profileRoot.child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                String name = dataSnapshot.child("name").getValue().toString();
+//                User u = null;
+                User u = dataSnapshot.getValue(User.class);
+
+                String name = u.name;
                 ProfileFragment.name.setText(name);
 
                 String bio = null;
                 try {
-                    bio = dataSnapshot.child("bio").getValue().toString();
+                    bio = u.bio;
                     ProfileFragment.bio.setText(bio);
                 } catch (Exception e) {
                     ProfileFragment.bio.setText("");
                 }
                 String phone = null;
                 try {
-                    phone = dataSnapshot.child("phone").getValue().toString();
+                    phone = u.phone;
                     ProfileFragment.phone.setText(phone);
                 } catch (Exception e) {
                     ProfileFragment.phoneLayout.setVisibility(View.GONE);
                 }
                 String email = null;
                 try {
-                    email = dataSnapshot.child("email").getValue().toString();
+                    email = u.email;
                     ProfileFragment.email.setText(email);
                 } catch (Exception e) {
                     ProfileFragment.emailLayout.setVisibility(View.GONE);
                 }
                 String location = null;
                 try {
-                    location = dataSnapshot.child("location").getValue().toString();
+                    location = u.location;
                     ProfileFragment.location.setText("From ");
                     SpannableString locationBold = new SpannableString(location);
                     locationBold.setSpan(new StyleSpan(Typeface.BOLD), 0, locationBold.length(), 0);
@@ -158,7 +171,7 @@ public class ProfileFragment extends Fragment {
                 }
                 String language = null;
                 try {
-                    language = dataSnapshot.child("language").getValue().toString();
+                    language = u.language;
                     ProfileFragment.language.setText("Speaks ");
                     SpannableString languageBold =  new SpannableString(language);
                     languageBold.setSpan(new StyleSpan(Typeface.BOLD), 0, languageBold.length(), 0);
@@ -169,7 +182,7 @@ public class ProfileFragment extends Fragment {
                 }
                 String school = null;
                 try {
-                    school = dataSnapshot.child("school").getValue().toString();
+                    school = u.school;
                     getSchoolName(school);
 
                 } catch (Exception e) {

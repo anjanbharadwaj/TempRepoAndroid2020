@@ -172,20 +172,12 @@ public class HomeActivity extends AppCompatActivity implements SchoolListFragmen
         setContentView(R.layout.activity_home);
 
         searchView = (FloatingSearchView) findViewById(R.id.searchView);
-//        materialSearchView = (MaterialSearchView) findViewById(R.id.materialSearchView);
-//        searchView = materialSearchView.getSearchView();
-//        results = materialSearchView.getSearchResults();
 
         coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorLayout);
         coordinatorLayout.bringToFront();
 
-
-//        toolbar = (Toolbar) findViewById(R.id.toolbar);
-
-//        setSupportActionBar(toolbar);
         viewPager = (ViewPager) findViewById(R.id.viewPager);
 
-        //set adapter to your ViewPager
         viewPager.setAdapter(new PageAdapter(getSupportFragmentManager()));
 
         //intialize the tab layout

@@ -149,25 +149,28 @@ public class EditProfileActivity extends AppCompatActivity implements IPickResul
                 ref.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        name.setText(dataSnapshot.child("name").getValue().toString());
-                        bio.setText(dataSnapshot.child("bio").getValue().toString());
-                        phone.setText(dataSnapshot.child("phone").getValue().toString());
-                        String lang = dataSnapshot.child("language").getValue().toString();
-                        spinnerLang.setSelection(getIndex(spinnerLang, lang));
+                        User u = dataSnapshot.getValue(User.class);
+
+                        if(u.name!=null) name.setText(u.name);
+                        if(u.bio!=null) bio.setText(u.bio);
+                        if(u.phone!=null) phone.setText(u.phone);
+                        String lang = u.language;
+                        if(lang!=null) spinnerLang.setSelection(getIndex(spinnerLang, lang));
 
 
-                        String schoolNum = dataSnapshot.child("school").getValue().toString();
-                        School userSchool = dataSnapshot1.child(schoolNum).getValue(School.class);
-                        String school = userSchool.name;
-                        String schoolLocation = userSchool.location;
+                        String schoolNum = u.school;
+                        if(schoolNum!=null) {
+                            School userSchool = dataSnapshot1.child(schoolNum).getValue(School.class);
+                            String school = userSchool.name;
+                            String schoolLocation = userSchool.location;
 
-                        List<Address> addresses = latLongToText(schoolLocation);
-                        String cityName = addresses.get(0).getLocality();
-                        String countryName = addresses.get(0).getCountryName();
-                        String text = school + ": " + cityName + ", " + countryName;
+                            List<Address> addresses = latLongToText(schoolLocation);
+                            String cityName = addresses.get(0).getLocality();
+                            String countryName = addresses.get(0).getCountryName();
+                            String text = school + ": " + cityName + ", " + countryName;
 
-                        spinnerSchools.setSelection(spinnerArrayAdapter.getPosition(text));
-
+                            spinnerSchools.setSelection(spinnerArrayAdapter.getPosition(text));
+                        }
 
                         MyOnItemSelectedListener moisl = new MyOnItemSelectedListener();
                         spinnerSchools.setOnItemSelectedListener(moisl);
@@ -288,8 +291,9 @@ public class EditProfileActivity extends AppCompatActivity implements IPickResul
 
             }
         });
-
-
+        Intent intent = new Intent();
+        setResult(Activity.RESULT_OK, intent);
+        finish();
 
     }
 

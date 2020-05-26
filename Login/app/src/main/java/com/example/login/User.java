@@ -6,20 +6,21 @@ import android.os.Parcelable;
 import com.arlib.floatingsearchview.suggestions.model.SearchSuggestion;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 public class User implements SearchSuggestion {
 
-    String UID;
-    String name;
-    String bio;
-    String language;
-    String location;
-    String email;
-    String phone;
-    String school;
-    ArrayList<String> friendUIDs;
-    boolean hasFriends = true;
-    public User(String name, String bio, String language, String location, String email, String phone, String school, ArrayList<String> friendUIDs) {
+    public String uid;
+    public String name;
+    public String bio;
+    public String language;
+    public String location;
+    public String email;
+    public String phone;
+    public String school;
+    public Map<String, Object> friendUIDs;
+
+    public User(String name, String bio, String language, String location, String email, String phone, String school, Map<String, Object> friendUIDs) {
         this.name = name;
         this.bio = bio;
         this.language = language;
@@ -28,11 +29,21 @@ public class User implements SearchSuggestion {
         this.phone = phone;
         this.school = school;
         this.friendUIDs = friendUIDs;
-        if(friendUIDs==null) hasFriends = false;
     }
 
+    public User(Parcel parcel){
+        this.name = parcel.readString();
+        this.bio = parcel.readString();
+        this.language = parcel.readString();
+        this.location = parcel.readString();
+        this.email = parcel.readString();
+        this.phone = parcel.readString();
+        this.school = parcel.readString();
+
+        this.friendUIDs = parcel.readHashMap(String.class.getClassLoader());
+    }
     public User(){
-        hasFriends = false;
+
     }
     @Override
     public String toString() {
@@ -68,7 +79,7 @@ public class User implements SearchSuggestion {
         dest.writeString(email);
         dest.writeString(phone);
         dest.writeString(school);
-        dest.writeStringList(friendUIDs);
+        dest.writeMap(friendUIDs);
     }
 
     public static final Parcelable.Creator<School> CREATOR = new Parcelable.Creator<School>() {
@@ -89,14 +100,14 @@ public class User implements SearchSuggestion {
         if (obj.getClass() != this.getClass()) return false;
         User u = (User) obj;
 
-        return UID.equals(u.UID);
+        return uid.equals(u.uid);
     }
 
-    public String getUID() {
-        return UID;
+    public String getuid() {
+        return uid;
     }
 
-    public void setUID(String UID) {
-        this.UID = UID;
+    public void setuid(String UID) {
+        this.uid = UID;
     }
 }
