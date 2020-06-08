@@ -47,7 +47,7 @@ public class School implements SearchSuggestion {
         this.description = parcel.readString();
         this.organizerID = parcel.readString();
         this.items = parcel.readArrayList(String.class.getClassLoader());//new ArrayList<>();
-        this.items.remove(0);
+//        if(this.items!=null) this.items.remove(0);
     }
     public String toString() {
 

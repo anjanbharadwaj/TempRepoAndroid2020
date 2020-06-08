@@ -1,19 +1,14 @@
 package com.example.login;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import androidx.cursoradapter.widget.CursorAdapter;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
-import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
-import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Address;
@@ -21,10 +16,10 @@ import android.location.Geocoder;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Html;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -32,8 +27,6 @@ import android.widget.Toast;
 import com.arlib.floatingsearchview.FloatingSearchView;
 import com.arlib.floatingsearchview.suggestions.SearchSuggestionsAdapter;
 import com.arlib.floatingsearchview.suggestions.model.SearchSuggestion;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -46,16 +39,17 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Locale;
 import java.util.StringTokenizer;
 
+import co.chatsdk.core.session.ChatSDK;
 
-public class HomeActivity extends AppCompatActivity implements SchoolListFragment.OnFragmentInteractionListener, FavoritesFragment.OnFragmentInteractionListener, ProfileFragment.OnFragmentInteractionListener{
 
+public class HomeActivity extends AppCompatActivity implements SchoolListFragment.OnFragmentInteractionListener, MyContactsFragment.OnFragmentInteractionListener, ProfileFragment.OnFragmentInteractionListener{
 
+    int positionoftab = 1;
     TabLayout tabLayout;
     ViewPager viewPager;
     Toolbar toolbar;
@@ -64,7 +58,7 @@ public class HomeActivity extends AppCompatActivity implements SchoolListFragmen
     DatabaseReference ref = database.getReference();
     FloatingSearchView searchView;
 
-    static ArrayList<School> suggestions = new ArrayList<>();
+    static ArrayList<SearchSuggestion> suggestions = new ArrayList<>();
     static ArrayList<String> list = new ArrayList<String>();
     int position;
     Bitmap image = null;
@@ -80,78 +74,130 @@ public class HomeActivity extends AppCompatActivity implements SchoolListFragmen
         searchView.showProgress();
 
         final String newQuery = query;
-        final DatabaseReference searchRef = database.getReference().child("Schools");
+        Log.e("Fragment Right Now", ""+positionoftab);
+        if(positionoftab==0) {
+            final DatabaseReference searchRef = database.getReference().child("Users");
+            searchRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    suggestions.clear();
+                    for (DataSnapshot d : dataSnapshot.getChildren()) {
+                        User user = d.getValue(User.class);
+                        user.uid = d.getKey().toString();
+                        UserSearchable userSearchable = new UserSearchable(user);
 
-        searchRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                suggestions.clear();
-                for (DataSnapshot d : dataSnapshot.getChildren()) {
-                    School school = d.getValue(School.class);
-                    String id = school.id;
-                    String name = school.name;
-                    String location = school.location;
-                    String organizerID = school.organizerID;
-                    String description = school.description;
-                    int raisedMoney = school.raisedMoney;
-                    int totalMoney = school.totalMoney;
-                    String imageUri = school.imageUri;
-                    ArrayList<String> items = school.items;
+                        String lQuery = newQuery.toLowerCase();
+                        StringTokenizer st = new StringTokenizer(lQuery);
 
-                    String lQuery = newQuery.toLowerCase();
-                    StringTokenizer st = new StringTokenizer(lQuery);
 
-                    double latitude = Double.parseDouble(location.split(",")[0]);
-                    double longitude = Double.parseDouble(location.split(",")[1].substring(1));
+                        boolean allTokens = false;
 
-                    Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
-                    List<Address> addresses = null;
-                    try {
-                        addresses = geocoder.getFromLocation(latitude, longitude, 1);
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                        while (st.hasMoreTokens()) {
+                            String currToken = st.nextToken();
+                            if (userSearchable.name.toLowerCase().contains(currToken) || userSearchable.location.toLowerCase().contains(currToken) || userSearchable.bio.contains(currToken)) {
+                                allTokens = true;
+                            } else {
+                                allTokens = false;
+                                break;
+                            }
+                        }
+                        if (allTokens) {
+                            suggestions.add(userSearchable);
+                        }
+
+
                     }
 
-                    String cityName = addresses.get(0).getLocality();
-                    String countryName = addresses.get(0).getCountryName();
-                    String totalLocation = cityName + ", " + countryName;
 
-                  ListIterator<String> iterator = items.listIterator();
-                        while (iterator.hasNext())
-                        {
+                    searchView.swapSuggestions(suggestions);
+                    searchView.hideProgress();
+                    Log.e("Suggestions", suggestions.toString());
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+
+        }
+        else if(positionoftab==1) {
+            final DatabaseReference searchRef = database.getReference().child("Schools");
+            searchRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    suggestions.clear();
+                    for (DataSnapshot d : dataSnapshot.getChildren()) {
+                        School school = d.getValue(School.class);
+                        school.items.remove(0);
+                        String id = school.id;
+                        String name = school.name;
+                        String location = school.location;
+                        String organizerID = school.organizerID;
+                        String description = school.description;
+                        int raisedMoney = school.raisedMoney;
+                        int totalMoney = school.totalMoney;
+                        String imageUri = school.imageUri;
+                        ArrayList<String> items = school.items;
+                        String lQuery = newQuery.toLowerCase();
+                        StringTokenizer st = new StringTokenizer(lQuery);
+
+                        double latitude = Double.parseDouble(location.split(",")[0]);
+                        double longitude = Double.parseDouble(location.split(",")[1].substring(1));
+
+                        Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
+                        List<Address> addresses = null;
+                        try {
+                            addresses = geocoder.getFromLocation(latitude, longitude, 1);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
+                        String cityName = addresses.get(0).getLocality();
+                        String countryName = addresses.get(0).getCountryName();
+                        String totalLocation = cityName + ", " + countryName;
+
+                        ListIterator<String> iterator = items.listIterator();
+                        while (iterator.hasNext()) {
                             iterator.set(iterator.next().toLowerCase());
                         }
 
 
+                        boolean allTokens = false;
 
-                    boolean allTokens = false;
-
-                    while (st.hasMoreTokens()) {
-                        String currToken = st.nextToken();
-                        if (name.toLowerCase().contains(currToken) || totalLocation.toLowerCase().contains(currToken) || items.contains(currToken)) {
-                            allTokens = true;
-                        } else {
-                            allTokens = false;
-                            break;
+                        while (st.hasMoreTokens()) {
+                            String currToken = st.nextToken();
+                            if (name.toLowerCase().contains(currToken) || totalLocation.toLowerCase().contains(currToken) || items.contains(currToken)) {
+                                allTokens = true;
+                            } else {
+                                allTokens = false;
+                                break;
+                            }
                         }
-                    }
-                    if (allTokens) {
-                        suggestions.add(new School(id, name, imageUri, location, raisedMoney, totalMoney, description, organizerID, items));
+                        if (allTokens) {
+                            suggestions.add(new School(id, name, imageUri, location, raisedMoney, totalMoney, description, organizerID, items));
+                        }
+
+
                     }
 
+
+                    searchView.swapSuggestions(suggestions);
+                    searchView.hideProgress();
+                    Log.e("Suggestions", suggestions.toString());
 
                 }
 
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
 
-                searchView.swapSuggestions(suggestions);
-                searchView.hideProgress();
-            }
+                }
+            });
+        }
+        else if(positionoftab==2){
+            Toast.makeText(getApplicationContext(), "You can't use search while on your profile!", Toast.LENGTH_LONG).show();
+        }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -165,11 +211,10 @@ public class HomeActivity extends AppCompatActivity implements SchoolListFragmen
             return super.onOptionsItemSelected(item);
 
     }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home);
+        setContentView(R.layout.activity_home_start);
 
         searchView = (FloatingSearchView) findViewById(R.id.searchView);
 
@@ -199,6 +244,7 @@ public class HomeActivity extends AppCompatActivity implements SchoolListFragmen
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
+                positionoftab = tab.getPosition();
                 viewPager.setCurrentItem(tab.getPosition());
             }
 
@@ -235,6 +281,7 @@ public class HomeActivity extends AppCompatActivity implements SchoolListFragmen
                         break;
                     case R.id.logout:
                         //use our authentication database to sign out.
+                        ChatSDK.auth().logout().subscribe();
                         FirebaseAuth auth = FirebaseAuth.getInstance();
                         auth.signOut();
                         //move user to sign in page once signed out.
@@ -290,7 +337,6 @@ public class HomeActivity extends AppCompatActivity implements SchoolListFragmen
                     htmlText = htmlText.replaceAll("(?i)" + currQuery, "<font color=#999999>" + currQuery + "</font>");
                 }
 
-
                 textView.setText(Html.fromHtml(htmlText));
             }
 
@@ -301,41 +347,51 @@ public class HomeActivity extends AppCompatActivity implements SchoolListFragmen
             @Override
             public void onSuggestionClicked(SearchSuggestion searchSuggestion) {
                 searchView.setSearchFocused(false);
-                Intent i = new Intent(getApplicationContext(), SchoolInfoActivity.class);
-                i.putExtra("School",searchSuggestion);
-                final School school = (School) searchSuggestion;
-
-                //Get the image from the book's image url
-                Thread thread = new Thread(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        try  {
-                            URL url = new URL(school.imageUri);
-                            image = BitmapFactory.decodeStream(url.openConnection().getInputStream());
-
-
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                });
-                //Start the process above with this line of code
-                thread.start();
-
-                try {
-                    //wait for the thread to die
-                    thread.join();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                if(positionoftab==0){
+                    Intent i = new Intent(getApplicationContext(), ViewOtherProfileActivity.class);
+                    UserSearchable userToPass = (UserSearchable) searchSuggestion;
+                    Log.e("UserToPass", userToPass.toString());
+                    i.putExtra("UID", userToPass.uid);
+                    startActivity(i);
                 }
-                //Convert the image from before into a byte array so that it can be passed into the new intent
-                ByteArrayOutputStream bStream = new ByteArrayOutputStream();
-                image.compress(Bitmap.CompressFormat.JPEG, 100, bStream);
-                byte[] byteArray = bStream.toByteArray();
+                else if(positionoftab==1) {
+                    Intent i = new Intent(getApplicationContext(), SchoolInfoActivity.class);
+                    i.putExtra("School", searchSuggestion);
+                    final School school = (School) searchSuggestion;
 
-                i.putExtra("Image", byteArray);
-                startActivity(i);
+                    //Get the image from the book's image url
+                    Thread thread = new Thread(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            try {
+                                URL url = new URL(school.imageUri);
+                                image = BitmapFactory.decodeStream(url.openConnection().getInputStream());
+
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                    //Start the process above with this line of code
+                    thread.start();
+
+                    try {
+                        //wait for the thread to die
+                        thread.join();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    //Convert the image from before into a byte array so that it can be passed into the new intent
+                    ByteArrayOutputStream bStream = new ByteArrayOutputStream();
+                    image.compress(Bitmap.CompressFormat.JPEG, 100, bStream);
+                    byte[] byteArray = bStream.toByteArray();
+
+                    i.putExtra("Image", byteArray);
+                    startActivity(i);
+                }
+
             }
 
             @Override
@@ -377,13 +433,14 @@ public class HomeActivity extends AppCompatActivity implements SchoolListFragmen
 
         @Override
         public Fragment getItem(int position) {
+
             switch (position) {
                 case 0:
-                    return new FavoritesFragment();
+                    return new MyContactsFragment();
                 case 1:
                     return new SchoolListFragment();
                 case 2:
-                    return new ProfileFragment();//change to profile later
+                    return new ProfileFragment();
                 default:
                     return new SchoolListFragment();
             }
@@ -398,7 +455,7 @@ public class HomeActivity extends AppCompatActivity implements SchoolListFragmen
         public CharSequence getPageTitle(int position) {
             switch (position) {
                 case 0:
-                    return FavoritesFragment.getName();
+                    return MyContactsFragment.getName();
                 case 1:
                     return SchoolListFragment.getName();
                 case 2:

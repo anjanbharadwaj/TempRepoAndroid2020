@@ -56,16 +56,25 @@ public class SchoolListFragment extends Fragment implements ObservableScrollView
     public ArrayList<School> listOfSchools = new ArrayList<>();
 
     private OnFragmentInteractionListener mListener;
-
+    public static HomeFeedValueEventListener homeFeedValueEventListener;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //initialize our database reference
         database = FirebaseDatabase.getInstance().getReference();
         activity = getActivity();
+        homeFeedValueEventListener = new HomeFeedValueEventListener();
+        Log.e("oncreate", "a");
+
 
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        database.child("Schools").removeEventListener(homeFeedValueEventListener);
+        Log.e("Tag", "FragmentA.onDestroy() has been called.");
+    }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -110,6 +119,7 @@ public class SchoolListFragment extends Fragment implements ObservableScrollView
 
                 i.putExtra("Image", byteArray);
                 startActivity(i);
+
             }
         };
 
@@ -121,8 +131,10 @@ public class SchoolListFragment extends Fragment implements ObservableScrollView
             mListener.onFragmentInteraction(uri);
         }
     }
+
     public void onViewCreated(View view, Bundle savedInstanceState){
         super.onViewCreated(view, savedInstanceState);
+        Log.e("Init", "In OnViewCreated");
         // initialise our views and set various attributes/layouts/listeners
         swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshLayout);
          progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
@@ -133,12 +145,13 @@ public class SchoolListFragment extends Fragment implements ObservableScrollView
         recyclerView.setLayoutManager(llm);
         recyclerView.setScrollViewCallbacks(this);
 
-        update();
+        update(true);
 
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                update();
+                update(false);
+                swipeRefreshLayout.setRefreshing(false);
             }
         });
 
@@ -148,34 +161,39 @@ public class SchoolListFragment extends Fragment implements ObservableScrollView
         recyclerView.setAdapter(schoolAdapter);
     }
 
-    private void update() {
-        database.child("Schools").addListenerForSingleValueEvent(new ValueEventListener() {
-
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                listOfSchools.clear();
-                recyclerView.setVisibility(View.INVISIBLE);
-                progressBar.setVisibility(View.VISIBLE);
-                for(DataSnapshot ds: dataSnapshot.getChildren()){
-                    School school = ds.getValue(School.class);
-                    listOfSchools.add(school);
-                    Log.e("School", school.toString());
-                }
-
-                showCards();
-                progressBar.setVisibility(View.GONE);
-                recyclerView.setVisibility(View.VISIBLE);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-        swipeRefreshLayout.setRefreshing(false);
+    private void update(boolean first) {
+        if(!first){
+            database.child("Schools").removeEventListener(homeFeedValueEventListener);
+        }
+        first = false;
+        database.child("Schools").keepSynced(true);
+        database.child("Schools").addListenerForSingleValueEvent(homeFeedValueEventListener);
     }
 
+    class HomeFeedValueEventListener implements ValueEventListener{
 
+        @Override
+        public void onDataChange(DataSnapshot dataSnapshot) {
+            listOfSchools.clear();
+            recyclerView.setVisibility(View.INVISIBLE);
+            progressBar.setVisibility(View.VISIBLE);
+            for(DataSnapshot ds: dataSnapshot.getChildren()){
+                School school = ds.getValue(School.class);
+                school.items.remove(0);
+                listOfSchools.add(school);
+                Log.e("School", school.toString());
+            }
+
+            showCards();
+            progressBar.setVisibility(View.GONE);
+            recyclerView.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        public void onCancelled(DatabaseError databaseError) {
+
+        }
+    }
 
     public static String getName() { return "Explore"; }
 

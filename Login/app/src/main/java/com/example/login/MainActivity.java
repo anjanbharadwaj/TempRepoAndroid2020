@@ -3,6 +3,7 @@ package com.example.login;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -12,7 +13,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.google.android.gms.auth.api.signin.internal.Storage;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -27,6 +27,11 @@ import com.google.firebase.storage.UploadTask;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 
+import co.chatsdk.core.session.ChatSDK;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+
+
 public class MainActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     Button login;
@@ -37,10 +42,19 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        mAuth = FirebaseAuth.getInstance();
+        setContentView(R.layout.activity_main_start);
 
-        Log.v(TAG, mAuth.toString());
+        mAuth = FirebaseAuth.getInstance();
+        FirebaseUser user = mAuth.getCurrentUser();
+        if (user != null) {
+            // User is signed in
+            Intent i = new Intent(MainActivity.this, HomeActivity.class);
+            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(i);
+        } else {
+            // User is signed out
+            Log.d(TAG, "onAuthStateChanged:signed_out");
+        }
         login = (Button)findViewById(R.id.login);
         register = (Button)findViewById(R.id.register);
 
@@ -66,6 +80,7 @@ public class MainActivity extends AppCompatActivity {
                                         FirebaseUser user = mAuth.getCurrentUser();
                                         Toast.makeText(MainActivity.this, "Login successful.",
                                                 Toast.LENGTH_SHORT).show();
+                                        authenticateWithCurrentFirebaseLogin();
 
                                         Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
                                         startActivity(intent);
@@ -144,6 +159,13 @@ public class MainActivity extends AppCompatActivity {
                             });
                 }
             }
+        });
+    }
+    public void authenticateWithCurrentFirebaseLogin () {
+        Disposable d = ChatSDK.auth().authenticate().subscribe(() -> {
+
+        }, throwable -> {
+
         });
     }
 }

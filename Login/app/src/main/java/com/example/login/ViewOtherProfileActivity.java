@@ -26,6 +26,11 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.mikhaellopez.circularimageview.CircularImageView;
 
+import co.chatsdk.core.session.ChatSDK;
+import co.chatsdk.firebase.wrappers.UserWrapper;
+import co.chatsdk.ui.utils.ToastHelper;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+
 public class ViewOtherProfileActivity extends AppCompatActivity {
     static TextView name;
     static TextView bio;
@@ -43,6 +48,7 @@ public class ViewOtherProfileActivity extends AppCompatActivity {
     static ConstraintLayout schoolLayout;
     static CircularImageView profilePic;
     static ImageButton addFriend;
+    static ImageButton messageFriend;
     static DatabaseReference profileRoot =  FirebaseDatabase.getInstance().getReference().child("Users");;
     static DatabaseReference myFriends = profileRoot.child(FirebaseAuth.getInstance().getUid().toString()).child("friendUIDs");
     boolean alreadyFriends = false;
@@ -58,7 +64,7 @@ public class ViewOtherProfileActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_profile);
+        setContentView(R.layout.fragment_profile_personal);
         final String uid = getIntent().getStringExtra("UID").toString();
 
         addFriend = findViewById(R.id.edit_or_add_button);
@@ -85,10 +91,12 @@ public class ViewOtherProfileActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(alreadyFriends){
+                    MyContactsFragment.changeUserInContactsImmediately(uid, false);
                     alreadyFriends=false;
                     myFriends.child(uid).removeValue();
                     toggleIcon();
                 } else {
+                    MyContactsFragment.changeUserInContactsImmediately(uid, true);
                     alreadyFriends=true;
                     myFriends.child(uid).setValue(true);
                     toggleIcon();
@@ -97,6 +105,27 @@ public class ViewOtherProfileActivity extends AppCompatActivity {
             }
         });
 
+        messageFriend = findViewById(R.id.message_button);
+        messageFriend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                UserWrapper userWrapper = UserWrapper.initWithEntityId(uid);
+                userWrapper.metaOn();
+                userWrapper.onlineOn();
+                co.chatsdk.core.dao.User otherUser = userWrapper.getModel();
+                Log.e("trying to start chat", uid);
+                ChatSDK.thread().createThread("", otherUser, ChatSDK.currentUser())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .doFinally(() -> {
+                        })
+                        .subscribe(thread -> {
+                            ChatSDK.ui().startChatActivityForID(getApplicationContext(), thread.getEntityID());
+                        }, throwable -> {
+                            ToastHelper.show(getApplicationContext(), throwable.getLocalizedMessage());
+                        });
+
+            }
+        });
 
 
         profilePic = findViewById(R.id.profilePic);

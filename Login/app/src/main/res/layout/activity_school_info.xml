@@ -122,46 +122,62 @@ android:fillViewport="true">
             android:layout_height="match_parent">
 
             <TextView
-                android:id="@+id/detailFavoriteLabel2"
-                android:layout_width="180dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="24dp"
-                android:layout_marginLeft="24dp"
+                android:id="@+id/detailDonateLabel2"
+                android:layout_width="181dp"
+                android:layout_height="69dp"
+                android:layout_marginStart="16dp"
                 android:layout_marginTop="4dp"
                 android:layout_marginBottom="12dp"
-                android:text="This school is not yet on your favorites list."
+                android:text=" If you wish to support this organization in a different way, please contact the school manager."
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/detailFavorite"
-                app:layout_constraintTop_toBottomOf="@+id/detailFavoriteLabel"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/detailDonateLabel"
                 app:layout_constraintVertical_bias="0.0" />
 
-            <RatingBar
-                android:id="@+id/detailFavorite"
+            <TextView
+                android:id="@+id/detailDonateLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:layout_marginLeft="20dp"
+                android:layout_marginStart="16dp"
                 android:layout_marginTop="12dp"
-                android:layout_marginBottom="12dp"
-                android:isIndicator="false"
-                android:numStars="1"
-                android:stepSize="1"
-                app:layout_constraintBottom_toBottomOf="parent"
+                android:text="Donate to this school!"
+                android:textAppearance="@style/TextAppearance.AppCompat.SearchResult.Subtitle"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
+
+            <Button
+                android:id="@+id/donateButton"
+                android:layout_width="150dp"
+                android:layout_height="50dp"
+                android:layout_marginStart="32dp"
+                android:background="@drawable/rounded_button"
+                android:paddingLeft="10dp"
+                android:paddingTop="10dp"
+                android:paddingRight="10dp"
+                android:paddingBottom="5dp"
+                android:text="Donate!"
+                app:layout_constraintBottom_toTopOf="@+id/detailDonateLabel3"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toEndOf="@+id/detailDonateLabel2"
+                app:layout_constraintTop_toTopOf="@+id/detailDonateLabel"
+                app:layout_constraintVertical_bias="0.0" />
+
             <TextView
-                android:id="@+id/detailFavoriteLabel"
+                android:id="@+id/detailDonateLabel3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="24dp"
-                android:layout_marginLeft="24dp"
-                android:layout_marginTop="12dp"
-                android:text="Add to my Favorites"
-                android:textAppearance="@style/TextAppearance.AppCompat.SearchResult.Subtitle"
-                app:layout_constraintStart_toEndOf="@+id/detailFavorite"
-                app:layout_constraintTop_toTopOf="parent" />
-
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="32dp"
+                android:text="Powered by GoFundMe"
+                android:textSize="10dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.4"
+                app:layout_constraintStart_toEndOf="@+id/detailDonateLabel2"
+                app:layout_constraintTop_toBottomOf="@+id/donateButton" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
 

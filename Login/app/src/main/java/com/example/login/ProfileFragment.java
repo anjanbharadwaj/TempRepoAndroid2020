@@ -1,5 +1,6 @@
 package com.example.login;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
@@ -8,7 +9,6 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
@@ -19,7 +19,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -34,6 +33,18 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.mikhaellopez.circularimageview.CircularImageView;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import co.chatsdk.core.session.ChatSDK;
+import co.chatsdk.core.types.AccountDetails;
+import co.chatsdk.firebase.wrappers.UserWrapper;
+import co.chatsdk.ui.utils.ToastHelper;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+
+import static co.chatsdk.core.types.AccountDetails.username;
+import static com.firebase.ui.auth.AuthUI.getApplicationContext;
 
 
 public class ProfileFragment extends Fragment {
@@ -50,6 +61,7 @@ public class ProfileFragment extends Fragment {
     static TextView language;
     static TextView school;
     static ImageButton editProfile;
+    static ImageButton message;
     static ConstraintLayout phoneLayout;
     static ConstraintLayout emailLayout;
     static ConstraintLayout locationLayout;
@@ -57,6 +69,7 @@ public class ProfileFragment extends Fragment {
     static ConstraintLayout schoolLayout;
     static CircularImageView profilePic;
     static DatabaseReference profileRoot;
+    static HashMap<String, Object> userMeta;
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -76,19 +89,53 @@ public class ProfileFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
 
-        return inflater.inflate(R.layout.fragment_profile, container, false);
+        return inflater.inflate(R.layout.fragment_profile_personal, container, false);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        message = view.findViewById(R.id.message_button);
+        message.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                UserWrapper userWrapper = UserWrapper.initWithEntityId("6fUK6kwMf6ci0L8360NU8E1Ahoh1");
+//                userWrapper.metaOn();
+//                userWrapper.onlineOn();
+//                co.chatsdk.core.dao.User otherUser = userWrapper.getModel();//userWrapper.getModel();
+//
+//                ProgressDialog pd = new ProgressDialog(getContext());
+//                pd.show();
+//
+//                ChatSDK.thread().createThread("", otherUser, ChatSDK.currentUser())
+//                        .observeOn(AndroidSchedulers.mainThread())
+//                        .doFinally(() -> {
+//                            pd.dismiss();
+//                        })
+//                        .subscribe(thread -> {
+//                            ChatSDK.ui().startChatActivityForID(getContext(), thread.getEntityID());
+//                        }, throwable -> {
+//                            ToastHelper.show(getContext(), throwable.getLocalizedMessage());
+//                        });
 
+//                ^ above code is for starting a convo with a specific id
+
+
+
+
+//                ChatSDK.ui().startChatActivityForID(getContext(), "6fUK6kwMf6ci0L8360NU8E1Ahoh1");
+                ChatSDK.ui().startMainActivity(getContext());
+            }
+        });
         editProfile = view.findViewById(R.id.edit_or_add_button);
         editProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+
+                userMeta = new HashMap<>(ChatSDK.currentUser().metaMap());
                 Intent intent = new Intent(getActivity().getApplicationContext(), EditProfileActivity.class);
-                startActivityForResult(intent, 1);
+                startActivity(intent);
             }
         });
 
@@ -111,28 +158,42 @@ public class ProfileFragment extends Fragment {
 
         loadProfileInfo(getActivity().getApplicationContext(), FirebaseAuth.getInstance().getCurrentUser().getUid().toString());
     }
+    public static void chatInit(User u){
 
+        ChatSDK.currentUser().setAvatarURL("https://image.shutterstock.com/image-photo/red-apple-on-white-background-260nw-158989157.jpg");
+
+        DatabaseReference ref_chatprofile = FirebaseDatabase.getInstance().getReference().child("prod").child("users").child(FirebaseAuth.getInstance().getUid().toString()).child("meta");
+        ref_chatprofile.child("name").setValue(u.name);
+        ref_chatprofile.child("name-lowercase").setValue(u.name.toLowerCase());
+
+        ChatSDK.currentUser().update();
+
+    }
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode==1){
-            String uid = FirebaseAuth.getInstance().getCurrentUser().getUid().toString();
-            loadProfileInfo(getContext(), uid);
+//            String uid = FirebaseAuth.getInstance().getCurrentUser().getUid().toString();
+//            loadProfileInfo(getContext(), uid);
+
         }
 
     }
 
     public static void loadProfileInfo(Context c, String uid){
-        StorageReference reference = FirebaseStorage.getInstance().getReference().child("Users").child(uid);
-        GlideApp.with(c).load(reference).apply(new RequestOptions()
-                .diskCacheStrategy(DiskCacheStrategy.NONE)
-                .skipMemoryCache(true).circleCrop()).into(profilePic);
 
-        profileRoot.child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
+        profileRoot.child(uid).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+
+
 //                User u = null;
                 User u = dataSnapshot.getValue(User.class);
+
+                GlideApp.with(c).load(u.pfpUrl).apply(new RequestOptions()
+                        .diskCacheStrategy(DiskCacheStrategy.NONE)
+                        .skipMemoryCache(true).circleCrop()).into(profilePic);
 
                 String name = u.name;
                 ProfileFragment.name.setText(name);
@@ -188,6 +249,7 @@ public class ProfileFragment extends Fragment {
                 } catch (Exception e) {
                     ProfileFragment.schoolLayout.setVisibility(View.GONE);
                 }
+//                if(userMeta!=null)
 
 
 

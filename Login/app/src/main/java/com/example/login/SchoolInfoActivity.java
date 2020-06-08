@@ -13,6 +13,7 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.location.Address;
 import android.location.Geocoder;
+import android.net.Uri;
 import android.os.Bundle;
 import android.renderscript.Allocation;
 import android.renderscript.Element;
@@ -21,10 +22,13 @@ import android.renderscript.ScriptIntrinsicBlur;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.cardview.widget.CardView;
 import androidx.palette.graphics.Palette;
 
 
@@ -46,7 +50,6 @@ import com.klinker.android.sliding.SlidingActivity;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
@@ -55,10 +58,9 @@ public class SchoolInfoActivity extends SlidingActivity{
     TextView detailDescription;
     TextView detailFundingLabel;
     ProgressBar detailFundingProgressBar;
-    TextView detailFavoriteLabel2;
-    RatingBar detailFavorite;
+    Button detailDonate;
     TextView detailManager;
-    TextView detailManagerClickToViewMore;
+    CardView detailManagerCardView;
     TextView detailManagerName;
     ExpandedListView detailItemsListView;
     MapView mapView;
@@ -66,13 +68,13 @@ public class SchoolInfoActivity extends SlidingActivity{
 
     ArrayList<String> items;
     ArrayAdapter<String> adapter;
+
     @Override
     public void init(Bundle savedInstanceState) {
 
-        final School school = getIntent().getParcelableExtra("School");
+        School school = getIntent().getParcelableExtra("School");
 
         setTitle(school.name);
-
         byte[] byteArray = getIntent().getByteArrayExtra("Image");
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inMutable = true;
@@ -100,58 +102,25 @@ public class SchoolInfoActivity extends SlidingActivity{
         detailDescription = findViewById(R.id.nameEditText);
         detailFundingLabel = findViewById(R.id.detailFundingLabel);
         detailFundingProgressBar = findViewById(R.id.detailFundingProgressBar);
-        detailFavoriteLabel2 = findViewById(R.id.detailFavoriteLabel2);
-        detailFavorite = findViewById(R.id.detailFavorite);
         detailManager = findViewById(R.id.detailManager);
-        detailManagerClickToViewMore = findViewById(R.id.detailManagerClickToViewMore);
+        detailDonate = findViewById(R.id.donateButton);
+        detailManagerCardView = findViewById(R.id.detailManagerCardView);
         detailItemsListView = findViewById(R.id.detailItemsListView);
         mapView = findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
         final String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-        DatabaseReference favoritesRef = FirebaseDatabase.getInstance().getReference().child("Users").child(uid).child("Favorites");
-        favoritesRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Log.e("UID", uid);
 
-                Iterator i = dataSnapshot.getChildren().iterator();
-                while(i.hasNext()){
-                    String key = ((DataSnapshot)i.next()).getKey().toString();
-                    Log.e("KEY", key);
-                    Log.e("ID", school.id);
-
-                    if(key.equals(school.id)){
-                        detailFavorite.setRating(1);
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-
-        detailFavorite.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
-            @Override
-            public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
-                if(rating==1){
-                    detailFavoriteLabel2.setText("This school will show up on your favorites list.");
-                    FirebaseDatabase.getInstance().getReference().child("Users").child(uid).child("Favorites").child(school.id).setValue("");
-                }
-                else{
-                    detailFavoriteLabel2.setText("This school is not yet on your favorites list.");
-                    FirebaseDatabase.getInstance().getReference().child("Users").child(uid).child("Favorites").child(school.id).removeValue();
-                }
-            }
-        });
-        detailManagerClickToViewMore.setOnClickListener(new View.OnClickListener() {
+        detailManagerCardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), ViewOtherProfileActivity.class);
-                intent.putExtra("UID",school.organizerID);
-                startActivity(intent);
+                if(school.organizerID.equals(uid)){
+                    Toast.makeText(getApplicationContext(), "You're trying to visit your own profile!", Toast.LENGTH_LONG).show();
+                } else {
+                    Intent intent = new Intent(getApplicationContext(), ViewOtherProfileActivity.class);
+                    intent.putExtra("UID", school.organizerID);
+                    startActivity(intent);
+                }
             }
         });
         detailDescription.setText(school.description);
@@ -160,37 +129,13 @@ public class SchoolInfoActivity extends SlidingActivity{
         detailFundingProgressBar.setProgress(school.raisedMoney);
 
         DatabaseReference managerRef = FirebaseDatabase.getInstance().getReference().child("Users").child(school.organizerID);
+        managerRef.keepSynced(true);
         managerRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Log.e("Init1",dataSnapshot.toString());
                 String managername = dataSnapshot.child("name").getValue().toString();
-
                 detailManagerName.setText(managername);
-
-//                switch(showpublic) {
-//                    case 0:
-//                        detailManager.setText(managername);
-//                        break;
-//                    case 1:
-//                        detailManager.setText(managername);
-//                        detailManagerEmail.setText(manageremail);
-//                        break;
-//                    case 2:
-//                        detailManager.setText(managername);
-//                        detailManagerPhone.setText(managerphone);
-//                        break;
-//                    case 3:
-//                        detailManager.setText(managername);
-//                        detailManagerEmail.setText(manageremail);
-//                        detailManagerPhone.setText(managerphone);
-//                        break;
-//                    default:
-//                        detailManager.setText(managername);
-//                        break;
-//                }
-
-
-
             }
 
             @Override
@@ -200,6 +145,7 @@ public class SchoolInfoActivity extends SlidingActivity{
         });
 
         items = school.items;
+        Log.e("itemsinschoolinfo", items.toString());
         adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, items);
         detailItemsListView.setAdapter(adapter);
 
@@ -235,6 +181,16 @@ public class SchoolInfoActivity extends SlidingActivity{
             }
         });
 
+//        detailDonate.setBackgroundColor(primaryColor);
+        detailDonate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String url = "https://www.gofundme.com/f/temporary-do-not-donate-please?utm_source=customer&utm_medium=copy_link&utm_campaign=p_cf+share-flow-1";
+                Intent i = new Intent(Intent.ACTION_VIEW);
+                i.setData(Uri.parse(url));
+                startActivity(i);
+            }
+        });
 
     }
 
