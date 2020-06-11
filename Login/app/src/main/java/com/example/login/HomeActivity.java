@@ -1,5 +1,6 @@
 package com.example.login;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
@@ -8,13 +9,17 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Address;
 import android.location.Geocoder;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.text.Html;
 import android.util.Log;
 import android.view.Menu;
@@ -39,16 +44,55 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Locale;
+import java.util.Map;
 import java.util.StringTokenizer;
 
 import co.chatsdk.core.session.ChatSDK;
+import eltos.simpledialogfragment.SimpleDialog;
+import eltos.simpledialogfragment.form.Check;
+import eltos.simpledialogfragment.form.FormElement;
+import eltos.simpledialogfragment.form.Input;
+import eltos.simpledialogfragment.form.SimpleFormDialog;
+import eltos.simpledialogfragment.list.CustomListDialog;
+import eltos.simpledialogfragment.list.SimpleListDialog;
+
+import static eltos.simpledialogfragment.list.CustomListDialog.SINGLE_CHOICE;
+import static eltos.simpledialogfragment.list.CustomListDialog.SINGLE_CHOICE_DIRECT;
 
 
-public class HomeActivity extends AppCompatActivity implements SchoolListFragment.OnFragmentInteractionListener, MyContactsFragment.OnFragmentInteractionListener, ProfileFragment.OnFragmentInteractionListener{
+public class HomeActivity extends AppCompatActivity implements SimpleFormDialog.OnDialogResultListener, SchoolListFragment.OnFragmentInteractionListener, MyContactsFragment.OnFragmentInteractionListener, ProfileFragment.OnFragmentInteractionListener{
 
+    SchoolListFragment schoolListFragment;
+
+    Map<String, String> codestoschoolsMap;
+
+    final String ONBOARDING1 = "1";
+    final String ONBOARDING2 = "2";
+    final String ONBOARDING3 = "3";
+    final String ONBOARDING4 = "4";
+    final String ONBOARDING5 = "5";
+    final String ONBOARDING6 = "6";
+    final String ONBOARDING7 = "7";
+    final String ONBOARDING8 = "8";
+    final String ONBOARDING9 = "9";
+    final String ONBOARDING10 = "10";
+    final String ONBOARDING11 = "11";
+    final String ONBOARDING12 = "12";
+
+    String onboardingname;
+    String onboardingusertype;
+    String onboardingphone;
+    String onboardinglang;
+    String onboardingbio;
+    String onboardingschool;
+    String onboardinglocation;
+    String onboardingcode;
+    String onboardingschoolid;
+    boolean onboarding = true;
     int positionoftab = 1;
     TabLayout tabLayout;
     ViewPager viewPager;
@@ -135,8 +179,8 @@ public class HomeActivity extends AppCompatActivity implements SchoolListFragmen
                         String location = school.location;
                         String organizerID = school.organizerID;
                         String description = school.description;
-                        int raisedMoney = school.raisedMoney;
-                        int totalMoney = school.totalMoney;
+                        double raisedMoney = school.raisedMoney;
+                        double totalMoney = school.totalMoney;
                         String imageUri = school.imageUri;
                         ArrayList<String> items = school.items;
                         String lQuery = newQuery.toLowerCase();
@@ -348,11 +392,17 @@ public class HomeActivity extends AppCompatActivity implements SchoolListFragmen
             public void onSuggestionClicked(SearchSuggestion searchSuggestion) {
                 searchView.setSearchFocused(false);
                 if(positionoftab==0){
-                    Intent i = new Intent(getApplicationContext(), ViewOtherProfileActivity.class);
                     UserSearchable userToPass = (UserSearchable) searchSuggestion;
-                    Log.e("UserToPass", userToPass.toString());
-                    i.putExtra("UID", userToPass.uid);
-                    startActivity(i);
+                    if(userToPass.uid.equals(FirebaseAuth.getInstance().getUid())){
+                        tabLayout.selectTab(tabLayout.getTabAt(2));
+                        viewPager.setCurrentItem(2);
+                    } else {
+                        Intent i = new Intent(getApplicationContext(), ViewOtherProfileActivity.class);
+
+                        Log.e("UserToPass", userToPass.toString());
+                        i.putExtra("UID", userToPass.uid);
+                        startActivity(i);
+                    }
                 }
                 else if(positionoftab==1) {
                     Intent i = new Intent(getApplicationContext(), SchoolInfoActivity.class);
@@ -400,10 +450,259 @@ public class HomeActivity extends AppCompatActivity implements SchoolListFragmen
             }
         });
 
-
+        //first if checks if this is the first time running. second one checks if we actually should onboard based on extra from intent.
+        if(onboarding){
+            Bundle b = getIntent().getExtras();
+            if(b!=null) {
+                onboarding = (Boolean) getIntent().getExtras().get("Onboarding");
+                if(onboarding){
+                    onboarding = false;
+                    runOnboarding(1);
+                }
+            }
+        }
+        onboarding = false;
 
 
     }
+
+    public void runOnboarding(int stage){
+        SimpleDialog d;
+        switch(stage) {
+            case 1:
+                d = SimpleFormDialog.build().title("Welcome to OneSharedSchool!").msg("This quick tutorial will walk you through the different aspects of the app" +
+                        " and will get you set up with your own profile!");
+                d.cancelable(false);
+                d.show(this, ONBOARDING1);
+                break;
+            case 2:
+                d = SimpleFormDialog.build().title("What should we call you?").fields(
+                        Input.name("NAME").hint("Enter your full name.").required()
+                );
+                d.cancelable(false);
+                d.show(this, ONBOARDING2);
+                break;
+            case 3:
+                d= SimpleListDialog.build()
+                        .title("Hey " + onboardingname + "!").msg("Are you a: ")
+                        .items(new String[]{"Student", "Teacher", "Donor"})
+                        .choiceMode(SINGLE_CHOICE);
+                d.cancelable(false);
+                d.show(this, ONBOARDING3);
+                break;
+            case 4:
+                d = SimpleFormDialog.build().title("Sweet! Mind entering your phone number?").msg("This is an optional step.").fields(
+                        Input.phone("PHONE")
+                );
+                d.cancelable(false);
+                d.show(this, ONBOARDING4);
+                break;
+            case 5:
+                d = SimpleListDialog.build()
+                        .title("Language preferences").msg("Unfortunately, translation isn't available just yet!")
+                        .items(getApplicationContext(), new int[]{R.string.english, R.string.spanish, R.string.mandarin, R.string.hindi, R.string.russian, R.string.arabic})
+                        .choiceMode(SINGLE_CHOICE);
+                d.cancelable(false);
+                d.show(this, ONBOARDING5);
+                break;
+            case 6:
+                int unicode = 0x1F605;
+                d = SimpleDialog.build()
+                        .title("Almost there \uD83D\uDE05!");
+                d.cancelable(false);
+                d.show(this, ONBOARDING6);
+                break;
+            case 7:
+                d = SimpleFormDialog.build().title(onboardingname + ": tell us a little bit about yourself!").msg("This is an optional step").fields(
+                        Input.plain("BIO").hint("1-2 sentences about yourself, your hobbies, etc."));
+                d.cancelable(false);
+                d.show(this, ONBOARDING7);
+                break;
+            case 8:
+                d = SimpleFormDialog.build().title("School Registration")
+                        .msg("Please enter your school's 10-digit, alphanumeric access code:")
+                        .fields(
+                                Input.plain("CODE").validatePatternAlphanumeric().min(10).max(10).required(),
+                                Check.box(null).label("I am a student from this school").required()
+                        );
+                d.cancelable(false);
+                d.show(this, ONBOARDING8);
+                break;
+            case 9:
+                d = SimpleFormDialog.build().title("School Registration")
+                        .msg("Error! We couldn't find that code. Please enter your school's 10-digit, alphanumeric access code:")
+                        .fields(
+                                Input.plain("CODE").validatePatternAlphanumeric().min(10).max(10).required(),
+                                Check.box(null).label("I am a student from this school").required()
+                        );
+                d.cancelable(false);
+                d.show(this, ONBOARDING8);
+                break;
+            case 10:
+                d = SimpleListDialog.build()
+                        .title("Confirm")
+                        .msg("To confirm: " + onboardingschool + " is your school, right?")
+                        .items(getApplicationContext(), new int[]{R.string.yes, R.string.no})
+                        .choiceMode(SINGLE_CHOICE);
+                d.cancelable(false);
+                d.show(this, ONBOARDING10);
+                break;
+            case 11:
+                int unicode2 = 0x1F973;
+                d = SimpleDialog.build()
+                        .title("All done \uD83D\uDE05"  + "!");
+                d.cancelable(false);
+                d.show(this, ONBOARDING11);
+                break;
+            default:
+                d = SimpleFormDialog.build().title("Welcome to OneSharedSchool!").msg("This quick tutorial will walk you through the different aspects of the app" +
+                        " and will get you set up with your own profile!");
+                d.cancelable(false);
+                d.show(this, ONBOARDING1);
+        }
+
+
+    }
+
+    @Override
+    public boolean onResult(@NonNull String dialogTag, int which, @NonNull Bundle extras) {
+        if(which == BUTTON_POSITIVE) {
+            if (ONBOARDING1.equals(dialogTag)) {
+                runOnboarding(2);
+            }
+            if (ONBOARDING2.equals(dialogTag)) {
+                onboardingname = extras.getString("NAME");
+                runOnboarding(3);
+            }
+            if (ONBOARDING3.equals(dialogTag)) {
+                Log.e("extras", extras.toString());
+                onboardingusertype = extras.get("SimpleListDialog.selectedSingleLabel").toString();
+                Log.e("usertype", onboardingusertype);
+                runOnboarding(4);
+            }
+            if (ONBOARDING4.equals(dialogTag)) {
+                onboardingphone = extras.getString("PHONE");
+                runOnboarding(5);
+            }
+            if (ONBOARDING5.equals(dialogTag)) {
+                onboardinglang = extras.getString("SimpleListDialog.selectedSingleLabel");
+                runOnboarding(6);
+            }
+            if (ONBOARDING6.equals(dialogTag)) {
+                runOnboarding(7);
+            }
+            if (ONBOARDING7.equals(dialogTag)) {
+                onboardingbio = extras.getString("BIO");
+                if(onboardingusertype.equals("Student") || onboardingusertype.equals("Teacher")) {
+                    DatabaseReference codestoschools = FirebaseDatabase.getInstance().getReference().child("SchoolCodes");
+                    codestoschools.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            codestoschoolsMap = (Map) dataSnapshot.getValue();
+                            runOnboarding(8);
+
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
+                } else{
+                    runOnboarding(11);
+                }
+            }
+            if (ONBOARDING8.equals(dialogTag)) {
+                onboardingcode = extras.getString("CODE");
+                if(verifyCode(onboardingcode)){
+                    runOnboarding(10);
+                } else {
+                    runOnboarding(9);
+                }
+            }
+            if (ONBOARDING9.equals(dialogTag)) {
+                onboardingcode = extras.getString("CODE");
+                if(verifyCode(onboardingcode)){
+                    runOnboarding(10);
+                }
+                else {
+                    runOnboarding(9);
+                }
+            }
+            if (ONBOARDING10.equals(dialogTag)) {
+                String confirmation = extras.getString("SimpleListDialog.selectedSingleLabel");
+                if(confirmation.equals("Yes")){
+                    setupprofile();
+                    runOnboarding(11);
+                } else{
+                    runOnboarding(9);
+                }
+            }
+
+
+            return true;
+        }
+        return false;
+    }
+    public void setupprofile(){
+        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("Users").child(FirebaseAuth.getInstance().getUid().toString());
+        userRef.child("name").setValue(onboardingname);
+        userRef.child("language").setValue(onboardinglang);
+        userRef.child("location").setValue(onboardinglocation);
+        userRef.child("bio").setValue(onboardingbio);
+        userRef.child("phone").setValue(onboardingphone);
+        userRef.child("school").setValue(onboardingschoolid);
+
+        ProfileFragment.loadProfileInfo(getApplicationContext(), FirebaseAuth.getInstance().getUid().toString());
+
+    }
+    public List<Address> latLongToText(String schoolLocation){
+
+
+        double latitude = Double.parseDouble(schoolLocation.split(",")[0]);
+        double longitude = Double.parseDouble(schoolLocation.split(",")[1].substring(1));
+
+
+        Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
+        List<Address> addresses = null;
+        try {
+            addresses = geocoder.getFromLocation(latitude, longitude, 1);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return addresses;
+    }
+
+    public boolean verifyCode(String code){
+        String s_id = "-1";
+        if(codestoschoolsMap.containsKey(code)){
+            s_id = String.valueOf(codestoschoolsMap.get(code));
+            Log.e("SchoolID", s_id);
+        }
+        if(s_id.equals("-1")){
+            return false;
+        }
+        Log.e("ListOfSchools",schoolListFragment.getListOfSchools().toString());
+        for(School s : schoolListFragment.getListOfSchools()){
+            Log.e("School s",s.id);
+            if(s.id.equals(s_id)){
+
+                String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                FirebaseDatabase.getInstance().getReference().child("Users").child(uid).child("school").setValue(s.id);
+                List<Address> addresses = latLongToText(s.location);
+                String cityName = addresses.get(0).getLocality();
+                String countryName = addresses.get(0).getCountryName();
+                onboardinglocation = cityName + ", " + countryName;
+                onboardingschoolid = s.id;
+                onboardingschool = s.name;
+                break;
+            }
+        }
+        return true;
+
+    }
+
+
 
     public void startVoiceRecognition() {
         Intent intent = new Intent("android.speech.action.RECOGNIZE_SPEECH");
@@ -425,6 +724,7 @@ public class HomeActivity extends AppCompatActivity implements SchoolListFragmen
         super.onActivityResult(requestCode, resultCode, data);
     }
 
+
     private class PageAdapter extends FragmentPagerAdapter {
 
         PageAdapter(FragmentManager fm) {
@@ -438,7 +738,8 @@ public class HomeActivity extends AppCompatActivity implements SchoolListFragmen
                 case 0:
                     return new MyContactsFragment();
                 case 1:
-                    return new SchoolListFragment();
+                    schoolListFragment = new SchoolListFragment();
+                    return schoolListFragment;
                 case 2:
                     return new ProfileFragment();
                 default:

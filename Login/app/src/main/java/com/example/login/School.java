@@ -14,8 +14,8 @@ public class School implements SearchSuggestion {
     public String name;
     public String imageUri;
     public String location;
-    public int raisedMoney;
-    public int totalMoney;
+    public double raisedMoney;
+    public double totalMoney;
     public String description;
     public String organizerID;
 
@@ -24,7 +24,7 @@ public class School implements SearchSuggestion {
     public School(){
 
     }
-    public School(String id, String name, String imageUri, String location, int raisedMoney, int totalMoney, String description, String organizerID, ArrayList<String> items) {
+    public School(String id, String name, String imageUri, String location, double raisedMoney, double totalMoney, String description, String organizerID, ArrayList<String> items) {
         this.id = id;
         this.name = name;
         this.imageUri = imageUri;
@@ -42,8 +42,8 @@ public class School implements SearchSuggestion {
         this.name = parcel.readString();
         this.imageUri = parcel.readString();
         this.location = parcel.readString();
-        this.raisedMoney = parcel.readInt();
-        this.totalMoney = parcel.readInt();
+        this.raisedMoney = parcel.readDouble();
+        this.totalMoney = parcel.readDouble();
         this.description = parcel.readString();
         this.organizerID = parcel.readString();
         this.items = parcel.readArrayList(String.class.getClassLoader());//new ArrayList<>();
@@ -91,8 +91,8 @@ public class School implements SearchSuggestion {
         dest.writeString(name);
         dest.writeString(imageUri);
         dest.writeString(location);
-        dest.writeInt(raisedMoney);
-        dest.writeInt(totalMoney);
+        dest.writeDouble(raisedMoney);
+        dest.writeDouble(totalMoney);
         dest.writeString(description);
         dest.writeString(organizerID);
         dest.writeList(items);//.writeStringList(items);

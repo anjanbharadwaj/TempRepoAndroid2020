@@ -2,6 +2,7 @@
 <resources>
     <string-array name="spinnerItems">
         <item>English</item>
+        <item>Spanish</item>
         <item>Mandarin</item>
         <item>Hindi</item>
         <item>Russian</item>

@@ -181,20 +181,24 @@ public class ProfileFragment extends Fragment {
     }
 
     public static void loadProfileInfo(Context c, String uid){
-
         profileRoot.child(uid).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-
-
+                Log.e("change made", "change we need");
 //                User u = null;
                 User u = dataSnapshot.getValue(User.class);
+                if(u.pfpUrl!=null) {
+                    Log.e("pfpurl", u.pfpUrl);
 
-                GlideApp.with(c).load(u.pfpUrl).apply(new RequestOptions()
-                        .diskCacheStrategy(DiskCacheStrategy.NONE)
-                        .skipMemoryCache(true).circleCrop()).into(profilePic);
-
+                    GlideApp.with(c).load(u.pfpUrl).apply(new RequestOptions()
+                            .diskCacheStrategy(DiskCacheStrategy.NONE)
+                            .skipMemoryCache(true).circleCrop()).into(profilePic);
+                } else {
+                    GlideApp.with(c).load(R.drawable.profile_picture_basic).apply(new RequestOptions()
+                            .diskCacheStrategy(DiskCacheStrategy.NONE)
+                            .skipMemoryCache(true).circleCrop()).into(profilePic);
+                }
                 String name = u.name;
                 ProfileFragment.name.setText(name);
 
@@ -209,6 +213,7 @@ public class ProfileFragment extends Fragment {
                 try {
                     phone = u.phone;
                     ProfileFragment.phone.setText(phone);
+                    ProfileFragment.phoneLayout.setVisibility(View.VISIBLE);
                 } catch (Exception e) {
                     ProfileFragment.phoneLayout.setVisibility(View.GONE);
                 }
@@ -216,6 +221,7 @@ public class ProfileFragment extends Fragment {
                 try {
                     email = u.email;
                     ProfileFragment.email.setText(email);
+                    ProfileFragment.emailLayout.setVisibility(View.VISIBLE);
                 } catch (Exception e) {
                     ProfileFragment.emailLayout.setVisibility(View.GONE);
                 }
@@ -227,6 +233,7 @@ public class ProfileFragment extends Fragment {
                     locationBold.setSpan(new StyleSpan(Typeface.BOLD), 0, locationBold.length(), 0);
 
                     ProfileFragment.location.append(locationBold);
+                    ProfileFragment.locationLayout.setVisibility(View.VISIBLE);
                 } catch (Exception e) {
                     ProfileFragment.locationLayout.setVisibility(View.GONE);
                 }
@@ -238,6 +245,7 @@ public class ProfileFragment extends Fragment {
                     languageBold.setSpan(new StyleSpan(Typeface.BOLD), 0, languageBold.length(), 0);
 
                     ProfileFragment.language.append(languageBold);
+                    ProfileFragment.languageLayout.setVisibility(View.VISIBLE);
                 } catch (Exception e) {
                     ProfileFragment.languageLayout.setVisibility(View.GONE);
                 }
@@ -245,7 +253,7 @@ public class ProfileFragment extends Fragment {
                 try {
                     school = u.school;
                     getSchoolName(school);
-
+                    ProfileFragment.schoolLayout.setVisibility(View.VISIBLE);
                 } catch (Exception e) {
                     ProfileFragment.schoolLayout.setVisibility(View.GONE);
                 }

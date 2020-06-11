@@ -2,6 +2,7 @@ package com.example.login;
 
 import androidx.annotation.NonNull;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -14,7 +15,9 @@ import android.graphics.Paint;
 import android.location.Address;
 import android.location.Geocoder;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.VibrationEffect;
 import android.renderscript.Allocation;
 import android.renderscript.Element;
 import android.renderscript.RenderScript;
@@ -28,8 +31,10 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
 import androidx.palette.graphics.Palette;
+import android.os.Vibrator;
 
 
 import com.google.android.gms.maps.CameraUpdate;
@@ -53,8 +58,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class SchoolInfoActivity extends SlidingActivity{
+import eltos.simpledialogfragment.SimpleDialog;
+import eltos.simpledialogfragment.form.Check;
+import eltos.simpledialogfragment.form.Input;
+import eltos.simpledialogfragment.form.SimpleFormDialog;
+import eltos.simpledialogfragment.input.SimpleInputDialog;
 
+public class SchoolInfoActivity extends SlidingActivity implements SimpleDialog.OnDialogResultListener, SimpleInputDialog.InputValidator {
+    final String DONATION = "donate";
+    boolean donateClicked = false;
     TextView detailDescription;
     TextView detailFundingLabel;
     ProgressBar detailFundingProgressBar;
@@ -69,10 +81,11 @@ public class SchoolInfoActivity extends SlidingActivity{
     ArrayList<String> items;
     ArrayAdapter<String> adapter;
 
+    School school;
     @Override
     public void init(Bundle savedInstanceState) {
 
-        School school = getIntent().getParcelableExtra("School");
+        school = getIntent().getParcelableExtra("School");
 
         setTitle(school.name);
         byte[] byteArray = getIntent().getByteArrayExtra("Image");
@@ -116,6 +129,14 @@ public class SchoolInfoActivity extends SlidingActivity{
             public void onClick(View v) {
                 if(school.organizerID.equals(uid)){
                     Toast.makeText(getApplicationContext(), "You're trying to visit your own profile!", Toast.LENGTH_LONG).show();
+                    Vibrator vib = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        vib.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE));
+                    } else {
+                        //deprecated in API 26
+                        vib.vibrate(500);
+                    }
+
                 } else {
                     Intent intent = new Intent(getApplicationContext(), ViewOtherProfileActivity.class);
                     intent.putExtra("UID", school.organizerID);
@@ -125,8 +146,8 @@ public class SchoolInfoActivity extends SlidingActivity{
         });
         detailDescription.setText(school.description);
         detailFundingLabel.setText("$"+school.raisedMoney+" of $"+school.totalMoney);
-        detailFundingProgressBar.setMax(school.totalMoney);
-        detailFundingProgressBar.setProgress(school.raisedMoney);
+        detailFundingProgressBar.setMax((int)school.totalMoney);
+        detailFundingProgressBar.setProgress((int)school.raisedMoney);
 
         DatabaseReference managerRef = FirebaseDatabase.getInstance().getReference().child("Users").child(school.organizerID);
         managerRef.keepSynced(true);
@@ -185,6 +206,7 @@ public class SchoolInfoActivity extends SlidingActivity{
         detailDonate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                donateClicked = true;
                 String url = "https://www.gofundme.com/f/temporary-do-not-donate-please?utm_source=customer&utm_medium=copy_link&utm_campaign=p_cf+share-flow-1";
                 Intent i = new Intent(Intent.ACTION_VIEW);
                 i.setData(Uri.parse(url));
@@ -216,6 +238,18 @@ public class SchoolInfoActivity extends SlidingActivity{
     public void onResume() {
         super.onResume();
         mapView.onResume();
+        if(donateClicked){
+            donateClicked=false;
+
+            SimpleDialog.build().title("Thanks!").msg("Thanks for donating! We appreciate it :)").show(this, DONATION);
+
+//            SimpleFormDialog.build()
+//                    .title("Donation")
+//                    .msg("Please enter your donation amount so that we can keep the OneSharedSchool platform up-to-date!")
+//                    .fields(
+//                            Input.plain("Donation Amount").max(5).required().validatePattern("/^(0|[1-9]\\d*)(\\.\\d+)?$/\n", "Needs to be a numeric or decimal value!"))
+//                    .show(this, DONATION);
+        }
     }
 
     @Override
@@ -261,4 +295,38 @@ public class SchoolInfoActivity extends SlidingActivity{
 
     }
 
+    @Override
+    public String validate(String dialogTag, @Nullable String input, @NonNull Bundle extras) {
+        Log.e("VALIDATE", dialogTag + ": "  + input);
+        if(dialogTag.equals(DONATION)){
+
+            if(isNumeric(input)){
+                double money = Double.parseDouble(input);
+                if(money>0 && money<50000){
+                    FirebaseDatabase.getInstance().getReference().child("Schools").child(school.id).child("raisedMoney").setValue(school.raisedMoney+money);
+                    Toast.makeText(getApplicationContext(), "Thank you for your donation!", Toast.LENGTH_SHORT).show();
+                    return null;
+                } else{
+                   return "Invalid donation amount!";
+                }
+            }
+            return "Non-numeric donation amount!";
+
+        }
+        return null;
+    }
+
+    public static boolean isNumeric(String str) {
+        try {
+            Double.parseDouble(str);
+            return true;
+        } catch(NumberFormatException e){
+            return false;
+        }
+    }
+
+    @Override
+    public boolean onResult(@NonNull String dialogTag, int which, @NonNull Bundle extras) {
+        return false;
+    }
 }

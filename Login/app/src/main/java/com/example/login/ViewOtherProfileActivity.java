@@ -236,11 +236,11 @@ public class ViewOtherProfileActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 School s = dataSnapshot.getValue(School.class);
                 String school = s.name;
-                ProfileFragment.school.setText("Studies at ");
+                ViewOtherProfileActivity.school.setText("Studies at ");
                 SpannableString schoolBold =  new SpannableString(school);
                 schoolBold.setSpan(new StyleSpan(Typeface.BOLD), 0, schoolBold.length(), 0);
 
-                ProfileFragment.school.append(schoolBold);
+                ViewOtherProfileActivity.school.append(schoolBold);
             }
 
             @Override

@@ -70,8 +70,10 @@ dependencies {
 
     implementation 'androidx.multidex:multidex:2.0.1'
 
-    implementation 'com.github.AppIntro:AppIntro:6.0.0'
+    implementation 'com.github.eltos:simpledialogfragment:3.1'
+    implementation 'com.alimuzaffar.lib:pinentryedittext:2.0.6'
 
+    implementation 'com.ramotion.paperonboarding:paper-onboarding:1.1.3'
 
 
 }

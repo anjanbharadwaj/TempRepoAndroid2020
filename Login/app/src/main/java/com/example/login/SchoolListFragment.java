@@ -53,6 +53,10 @@ public class SchoolListFragment extends Fragment implements ObservableScrollView
     RecyclerViewClickListener listener;
     Bitmap image = null;
 
+    public ArrayList<School> getListOfSchools() {
+        return listOfSchools;
+    }
+
     public ArrayList<School> listOfSchools = new ArrayList<>();
 
     private OnFragmentInteractionListener mListener;
@@ -278,8 +282,8 @@ class SchoolAdapter extends RecyclerView.Adapter<SchoolAdapter.SchoolViewHolder>
 
         schoolViewHolder.location.setText(cityName + ", " + countryName);
         schoolViewHolder.description.setText(school.description);
-        schoolViewHolder.fundsRaised.setMax(school.totalMoney);
-        schoolViewHolder.fundsRaised.setProgress(school.raisedMoney);
+        schoolViewHolder.fundsRaised.setMax((int)school.totalMoney);
+        schoolViewHolder.fundsRaised.setProgress((int)school.raisedMoney);
 
         //Load the proper image into the imageView using the Glide framework
         Glide.with(schoolViewHolder.itemView)

@@ -235,9 +235,16 @@ class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder> {
         userViewHolder.name.setText(user.name);
 
         //Load the proper image into the imageView using the Glide framework
-        Glide.with(userViewHolder.itemView)
-                .load(user.pfpUrl)
-                .into(userViewHolder.profilePic);
+        if(user.pfpUrl!=null){
+            Glide.with(userViewHolder.itemView)
+                    .load(user.pfpUrl)
+                    .into(userViewHolder.profilePic);
+        } else{
+            Glide.with(userViewHolder.itemView)
+                    .load(R.drawable.profile_picture_basic)
+                    .into(userViewHolder.profilePic);
+        }
+
     }
 
     @Override

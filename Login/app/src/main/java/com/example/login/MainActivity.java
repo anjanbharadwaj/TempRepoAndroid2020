@@ -14,6 +14,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -58,8 +59,8 @@ public class MainActivity extends AppCompatActivity {
         login = (Button)findViewById(R.id.login);
         register = (Button)findViewById(R.id.register);
 
-        email = (EditText)findViewById(R.id.emailEdit);
-        password = (EditText)findViewById(R.id.passwordEdit);
+        email = (EditText)findViewById(R.id.emailEditText);
+        password = (EditText)findViewById(R.id.passwordEditText);
 
         login.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -108,55 +109,7 @@ public class MainActivity extends AppCompatActivity {
                 if(emailText.length()==0 || passwordText.length()==0){
 
                 } else {
-                    Log.v(TAG, "Signing up");
-                    Log.v(TAG, emailText + ": " + passwordText);
-
-                    mAuth.createUserWithEmailAndPassword(emailText, passwordText)
-                            .addOnCompleteListener(MainActivity.this, new OnCompleteListener<AuthResult>() {
-                                @Override
-                                public void onComplete(@NonNull Task<AuthResult> task) {
-                                    if (task.isSuccessful()) {
-                                        // Sign in success, update UI with the signed-in user's information
-                                        Log.d(TAG, "createUserWithEmail:success");
-                                        FirebaseUser user = mAuth.getCurrentUser();
-                                        Toast.makeText(MainActivity.this, "Registration successful.",
-                                                Toast.LENGTH_SHORT).show();
-                                        String uid = user.getUid().toString();
-                                        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("Users").child(uid);
-                                        ref.child("email").setValue(emailText);
-                                        ref.child("name").setValue("Booh Van");
-
-                                        StorageReference profPicRef = FirebaseStorage.getInstance().getReference().child("Users").child(uid);
-                                        Uri uri = Uri.parse("android.resource://com.example.login/drawable/profile_picture_basic");
-                                        try {
-                                            InputStream stream = getContentResolver().openInputStream(uri);
-                                            UploadTask uploadTask = profPicRef.putStream(stream);
-
-                                            uploadTask.addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
-                                                @Override
-                                                public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-                                                    Log.e("Task", task.getResult().getMetadata().toString());
-                                                    Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
-                                                    startActivity(intent);
-                                                }
-                                            });
-                                        } catch (FileNotFoundException e) {
-                                            e.printStackTrace();
-                                        }
-
-
-
-
-                                    } else {
-                                        // If sign in fails, display a message to the user.
-                                        Log.w(TAG, "createUserWithEmail:failure", task.getException());
-                                        Toast.makeText(MainActivity.this, "Registration failed.",
-                                                Toast.LENGTH_SHORT).show();
-                                    }
-
-                                    // ...
-                                }
-                            });
+                    onboarding(emailText, passwordText);
                 }
             }
         });
@@ -167,5 +120,62 @@ public class MainActivity extends AppCompatActivity {
         }, throwable -> {
 
         });
+    }
+
+    public void onboarding(String emailText, String passwordText){
+        mAuth.createUserWithEmailAndPassword(emailText, passwordText)
+                .addOnCompleteListener(MainActivity.this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.d(TAG, "createUserWithEmail:success");
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            Toast.makeText(MainActivity.this, "Registration successful.",
+                                    Toast.LENGTH_SHORT).show();
+                            String uid = user.getUid().toString();
+                            DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("Users").child(uid);
+                            ref.child("email").setValue(emailText);
+                            ref.child("name").setValue("Booh Van");
+                            authenticateWithCurrentFirebaseLogin();
+
+                            StorageReference profPicRef = FirebaseStorage.getInstance().getReference().child("Users").child(uid);
+
+                            Uri uri = Uri.parse("android.resource://com.example.login/drawable/profile_picture_basic");
+                            try {
+                                InputStream stream = getContentResolver().openInputStream(uri);
+                                UploadTask uploadTask = profPicRef.putStream(stream);
+
+                                uploadTask.addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+
+                                    }
+                                });
+                            } catch (FileNotFoundException e) {
+                                e.printStackTrace();
+                            }
+                            Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
+                            intent.putExtra("Onboarding", true);
+                            startActivity(intent);
+
+
+
+
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            Log.w(TAG, "createUserWithEmail:failure", task.getException());
+                            Toast.makeText(MainActivity.this, "Registration failed.",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+
+                        // ...
+                    }
+                });
+    }
+
+    @Override
+    public void onBackPressed() {
+
     }
 }

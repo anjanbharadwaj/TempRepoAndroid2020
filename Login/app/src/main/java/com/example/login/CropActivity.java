@@ -9,12 +9,16 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
+import android.widget.Toast;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
 public class CropActivity extends AppCompatActivity {
     CropImageView cropImageView;
     Button crop;
+    ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,7 +27,8 @@ public class CropActivity extends AppCompatActivity {
 
         cropImageView = findViewById(R.id.cropImageView);
         crop = findViewById(R.id.crop);
-
+        progressBar = findViewById(R.id.progressbar_crop);
+        progressBar.setVisibility(View.GONE);
         cropImageView.setAspectRatio(10, 10);
         cropImageView.setGuidelines(CropImageView.Guidelines.ON);
         cropImageView.setFixedAspectRatio(true);
@@ -41,7 +46,10 @@ public class CropActivity extends AppCompatActivity {
         crop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.e("Result", "1");
+                progressBar.bringToFront();
+                progressBar.setVisibility(View.VISIBLE);
+
+                Toast.makeText(getApplicationContext(), "Making adjustments to picture...", Toast.LENGTH_LONG).show();
                 Bitmap cropped = cropImageView.getCroppedImage();
 
                 new ImageSaver(getApplicationContext()).
@@ -51,6 +59,7 @@ public class CropActivity extends AppCompatActivity {
                         save(cropped);
 
                 EditProfileActivity.changePfpMethod1(getApplicationContext());
+                progressBar.setVisibility(View.GONE);
                 finish();
             }
         });
