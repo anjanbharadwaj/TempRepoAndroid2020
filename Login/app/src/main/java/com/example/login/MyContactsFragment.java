@@ -46,7 +46,7 @@ import java.util.Locale;
 import co.chatsdk.core.session.ChatSDK;
 
 public class MyContactsFragment extends Fragment{
-
+    static TextView nocontacts;
     DatabaseReference database;
     static FragmentActivity activity;
     SwipeRefreshLayout swipeRefreshLayout;
@@ -106,8 +106,14 @@ public class MyContactsFragment extends Fragment{
         LinearLayoutManager llm = new LinearLayoutManager(getActivity());
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(llm);
-
+        nocontacts = (TextView) view.findViewById(R.id.nocontacts);
+        nocontacts.setVisibility(View.GONE);
         update();
+        if(listOfUsers.isEmpty()){
+            nocontacts.setVisibility(View.VISIBLE);
+        } else{
+            nocontacts.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -134,8 +140,14 @@ public class MyContactsFragment extends Fragment{
 
 
     public void showCards() {
+
         userAdapter = new UserAdapter(listOfUsers, listener);
         recyclerView.setAdapter(userAdapter);
+        if(listOfUsers.isEmpty()){
+            nocontacts.setVisibility(View.VISIBLE);
+        } else{
+            nocontacts.setVisibility(View.GONE);
+        }
     }
 
     private void update() {
@@ -188,6 +200,12 @@ public class MyContactsFragment extends Fragment{
                 userAdapter.notifyDataSetChanged();
                 Log.e("UserChanged", u.toString());
                 Log.e("listofusers", listOfUsers.toString());
+
+                if(listOfUsers.isEmpty()){
+                    nocontacts.setVisibility(View.VISIBLE);
+                } else{
+                    nocontacts.setVisibility(View.GONE);
+                }
             }
 
             @Override

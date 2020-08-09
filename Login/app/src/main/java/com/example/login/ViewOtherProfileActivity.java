@@ -5,7 +5,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.SpannableString;
 import android.text.style.StyleSpan;
@@ -25,6 +27,8 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.mikhaellopez.circularimageview.CircularImageView;
+
+import java.util.function.Consumer;
 
 import co.chatsdk.core.session.ChatSDK;
 import co.chatsdk.firebase.wrappers.UserWrapper;
@@ -121,7 +125,7 @@ public class ViewOtherProfileActivity extends AppCompatActivity {
                         .subscribe(thread -> {
                             ChatSDK.ui().startChatActivityForID(getApplicationContext(), thread.getEntityID());
                         }, throwable -> {
-                            ToastHelper.show(getApplicationContext(), throwable.getLocalizedMessage());
+                            ToastHelper.show(getApplicationContext(), "Unfortunately, this user hasn't created a chat profile yet!");
                         });
 
             }
@@ -146,25 +150,43 @@ public class ViewOtherProfileActivity extends AppCompatActivity {
         languageLayout = findViewById(R.id.languageConstraint);
         schoolLayout = findViewById(R.id.schoolConstraint);
 
+
+        phoneLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_DIAL);
+                intent.setData(Uri.parse("tel:" + phone.getText().toString()));
+                startActivity(intent);             }
+        });
         loadProfileInfo(getApplicationContext(), uid);
     }
 
 
     public static void loadProfileInfo(Context c, String uid){
-        try {
-            StorageReference reference = FirebaseStorage.getInstance().getReference().child("Users").child(uid);
-            GlideApp.with(c).load(reference).apply(new RequestOptions()
-                    .diskCacheStrategy(DiskCacheStrategy.NONE)
-                    .skipMemoryCache(true).circleCrop()).into(profilePic);
-        }
-        catch(Exception e){
-            Log.e("ProfInfo", "failed");
-        }
+//        try {
+//            StorageReference reference = FirebaseStorage.getInstance().getReference().child("Users").child(uid);
+//            GlideApp.with(c).load(reference).apply(new RequestOptions()
+//                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+//                    .skipMemoryCache(true).circleCrop()).into(profilePic);
+//        }
+//        catch(Exception e){
+//            Log.e("ProfInfo", "failed");
+//        }
         profileRoot.child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 User u = dataSnapshot.getValue(User.class);
+                if(u.pfpUrl!=null) {
+                    Log.e("pfpurl", u.pfpUrl);
 
+                    GlideApp.with(c).load(u.pfpUrl).apply(new RequestOptions()
+                            .diskCacheStrategy(DiskCacheStrategy.NONE)
+                            .skipMemoryCache(true).circleCrop()).into(profilePic);
+                } else {
+                    GlideApp.with(c).load(R.drawable.profile_picture_basic).apply(new RequestOptions()
+                            .diskCacheStrategy(DiskCacheStrategy.NONE)
+                            .skipMemoryCache(true).circleCrop()).into(profilePic);
+                }
                 String name = u.name;
                 ViewOtherProfileActivity.name.setText(name);
 
@@ -192,11 +214,15 @@ public class ViewOtherProfileActivity extends AppCompatActivity {
                 String location = null;
                 try {
                     location = u.location;
-                    ViewOtherProfileActivity.location.setText("From ");
-                    SpannableString locationBold = new SpannableString(location);
-                    locationBold.setSpan(new StyleSpan(Typeface.BOLD), 0, locationBold.length(), 0);
+                    if(location.equals("-1")){
+                        ViewOtherProfileActivity.location.setText("No location yet.");
+                    } else {
+                        ViewOtherProfileActivity.location.setText("From ");
+                        SpannableString locationBold = new SpannableString(location);
+                        locationBold.setSpan(new StyleSpan(Typeface.BOLD), 0, locationBold.length(), 0);
 
-                    ViewOtherProfileActivity.location.append(locationBold);
+                        ViewOtherProfileActivity.location.append(locationBold);
+                    }
                 } catch (Exception e) {
                     ViewOtherProfileActivity.locationLayout.setVisibility(View.GONE);
                 }
@@ -214,7 +240,10 @@ public class ViewOtherProfileActivity extends AppCompatActivity {
                 String school = null;
                 try {
                     school = u.school;
-                    getSchoolName(school);
+                    if(school.equals("-1")){
+                        ViewOtherProfileActivity.school.setText("No school yet.");
+                    }
+                    else getSchoolName(school);
 
                 } catch (Exception e) {
                     ViewOtherProfileActivity.schoolLayout.setVisibility(View.GONE);

@@ -2,9 +2,11 @@ package com.example.login;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -61,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
 
         email = (EditText)findViewById(R.id.emailEditText);
         password = (EditText)findViewById(R.id.passwordEditText);
+
 
         login.setOnClickListener(new View.OnClickListener() {
             @Override

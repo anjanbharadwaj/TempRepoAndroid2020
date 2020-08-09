@@ -141,17 +141,23 @@ public class EditProfileActivity extends AppCompatActivity implements IPickResul
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                             School userSchool = dataSnapshot.getValue(School.class);
                             String school = userSchool.name;
-                            String schoolLocation = userSchool.location;
+                            if(school.equals("-1")){
+                                schoolText.setText("No school yet.");
+                            } else {
+                                String schoolLocation = userSchool.location;
 
-                            List<Address> addresses = latLongToText(schoolLocation);
-                            String cityName = addresses.get(0).getLocality();
-                            String countryName = addresses.get(0).getCountryName();
-                            String text = school + ": " + cityName + ", " + countryName;
+                                List<Address> addresses = latLongToText(schoolLocation);
+                                String cityName = addresses.get(0).getLocality();
+                                String countryName = addresses.get(0).getCountryName();
+                                String text = school + ": " + cityName + ", " + countryName;
 
-                            schoolText.setText(text);
+                                schoolText.setText(text);
 //                            spinnerSchools.setSelection(spinnerArrayAdapter.getPosition(text));
 
 
+
+
+                            }
                             MyOnItemSelectedListener moisl = new MyOnItemSelectedListener();
 //                            spinnerSchools.setOnItemSelectedListener(moisl);
                             spinnerLang.setOnItemSelectedListener(moisl);
@@ -175,8 +181,6 @@ public class EditProfileActivity extends AppCompatActivity implements IPickResul
                             name.addTextChangedListener(tw);
                             bio.addTextChangedListener(tw);
                             phone.addTextChangedListener(tw);
-
-
                         }
 
                         @Override
@@ -187,6 +191,7 @@ public class EditProfileActivity extends AppCompatActivity implements IPickResul
                     //create new ref to quickly find this school with schoolnum
 
                 }
+
 
 
 
@@ -328,6 +333,9 @@ public class EditProfileActivity extends AppCompatActivity implements IPickResul
         String nameText = name.getText().toString();
         String bioText = bio.getText().toString();
         String phoneText = phone.getText().toString();
+        if(phoneText.equals("+1-408-408-4084")){
+            phoneText = null;
+        }
         String language = spinnerLang.getSelectedItem().toString();
 
         boolean nameChanged = false;
@@ -344,9 +352,11 @@ public class EditProfileActivity extends AppCompatActivity implements IPickResul
             pfpChanged = true;
             u.pfpUrl = pfpUrl;
         }
+        if(!currentSchoolNum.equals("-1")){
+            u.school = currentSchoolNum;
+            u.location = schoolText.getText().toString().split(": ")[1];
+        }
 
-        u.school = currentSchoolNum;
-        u.location = schoolText.getText().toString().split(": ")[1];
 
         Log.e("USER", u.toString());
         ref.setValue(u);

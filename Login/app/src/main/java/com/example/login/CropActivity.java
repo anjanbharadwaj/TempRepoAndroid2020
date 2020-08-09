@@ -49,7 +49,7 @@ public class CropActivity extends AppCompatActivity {
                 progressBar.bringToFront();
                 progressBar.setVisibility(View.VISIBLE);
 
-                Toast.makeText(getApplicationContext(), "Making adjustments to picture...", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "Making adjustments to your picture...", Toast.LENGTH_LONG).show();
                 Bitmap cropped = cropImageView.getCroppedImage();
 
                 new ImageSaver(getApplicationContext()).

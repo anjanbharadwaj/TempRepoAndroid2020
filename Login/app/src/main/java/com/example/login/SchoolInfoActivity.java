@@ -146,8 +146,8 @@ public class SchoolInfoActivity extends SlidingActivity implements SimpleDialog.
         });
         detailDescription.setText(school.description);
         detailFundingLabel.setText("$"+school.raisedMoney+" of $"+school.totalMoney);
-        detailFundingProgressBar.setMax((int)school.totalMoney);
-        detailFundingProgressBar.setProgress((int)school.raisedMoney);
+        detailFundingProgressBar.setMax((int) Double.parseDouble(school.totalMoney));
+        detailFundingProgressBar.setProgress((int) Double.parseDouble(school.raisedMoney));
 
         DatabaseReference managerRef = FirebaseDatabase.getInstance().getReference().child("Users").child(school.organizerID);
         managerRef.keepSynced(true);
@@ -181,16 +181,29 @@ public class SchoolInfoActivity extends SlidingActivity implements SimpleDialog.
 
                 Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
                 List<Address> addresses = null;
+                String cityName = "";
+                String countryName = "";
                 try {
                     addresses = geocoder.getFromLocation(latitude, longitude, 1);
-                } catch (IOException e) {
+                    cityName = addresses.get(0).getLocality();
+//        String stateName = addresses.get(0).getAddressLine(1);
+                    countryName = addresses.get(0).getCountryName();
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
 
-                String cityName = addresses.get(0).getLocality();
-                String countryName = addresses.get(0).getCountryName();
+                String finAddress = "";
+                if(!cityName.isEmpty()){
+                    finAddress = cityName;
+                }
+                if(!countryName.isEmpty()){
+                    if(!cityName.isEmpty()){
+                        finAddress += ", ";
+                    };
+                    finAddress += countryName;
+                }
 
-                String markerText = cityName + ", " + countryName;
+                String markerText =finAddress;
                 LatLng position = new LatLng(latitude, longitude);
                 Marker marker  = googleMap.addMarker(new MarkerOptions().position(position).title(markerText));
 
@@ -207,7 +220,7 @@ public class SchoolInfoActivity extends SlidingActivity implements SimpleDialog.
             @Override
             public void onClick(View v) {
                 donateClicked = true;
-                String url = "https://www.gofundme.com/f/temporary-do-not-donate-please?utm_source=customer&utm_medium=copy_link&utm_campaign=p_cf+share-flow-1";
+                String url = school.fundLink;//"https://www.gofundme.com/f/temporary-do-not-donate-please?utm_source=customer&utm_medium=copy_link&utm_campaign=p_cf+share-flow-1";
                 Intent i = new Intent(Intent.ACTION_VIEW);
                 i.setData(Uri.parse(url));
                 startActivity(i);
@@ -243,12 +256,6 @@ public class SchoolInfoActivity extends SlidingActivity implements SimpleDialog.
 
             SimpleDialog.build().title("Thanks!").msg("Thanks for donating! We appreciate it :)").show(this, DONATION);
 
-//            SimpleFormDialog.build()
-//                    .title("Donation")
-//                    .msg("Please enter your donation amount so that we can keep the OneSharedSchool platform up-to-date!")
-//                    .fields(
-//                            Input.plain("Donation Amount").max(5).required().validatePattern("/^(0|[1-9]\\d*)(\\.\\d+)?$/\n", "Needs to be a numeric or decimal value!"))
-//                    .show(this, DONATION);
         }
     }
 
@@ -295,6 +302,7 @@ public class SchoolInfoActivity extends SlidingActivity implements SimpleDialog.
 
     }
 
+    //function never used
     @Override
     public String validate(String dialogTag, @Nullable String input, @NonNull Bundle extras) {
         Log.e("VALIDATE", dialogTag + ": "  + input);

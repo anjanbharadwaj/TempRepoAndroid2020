@@ -138,7 +138,7 @@ public class HomeActivity extends AppCompatActivity implements SimpleFormDialog.
 
                         while (st.hasMoreTokens()) {
                             String currToken = st.nextToken();
-                            if (userSearchable.name.toLowerCase().contains(currToken) || userSearchable.location.toLowerCase().contains(currToken) || userSearchable.bio.contains(currToken)) {
+                            if (userSearchable.name.toLowerCase().contains(currToken) || userSearchable.location.toLowerCase().contains(currToken)) {
                                 allTokens = true;
                             } else {
                                 allTokens = false;
@@ -179,8 +179,9 @@ public class HomeActivity extends AppCompatActivity implements SimpleFormDialog.
                         String location = school.location;
                         String organizerID = school.organizerID;
                         String description = school.description;
-                        double raisedMoney = school.raisedMoney;
-                        double totalMoney = school.totalMoney;
+                        String fundLink = school.fundLink;
+                        double raisedMoney = Double.parseDouble(school.raisedMoney);
+                        double totalMoney = Double.parseDouble(school.totalMoney);
                         String imageUri = school.imageUri;
                         ArrayList<String> items = school.items;
                         String lQuery = newQuery.toLowerCase();
@@ -219,7 +220,7 @@ public class HomeActivity extends AppCompatActivity implements SimpleFormDialog.
                             }
                         }
                         if (allTokens) {
-                            suggestions.add(new School(id, name, imageUri, location, raisedMoney, totalMoney, description, organizerID, items));
+                            suggestions.add(school);
                         }
 
 
@@ -609,6 +610,7 @@ public class HomeActivity extends AppCompatActivity implements SimpleFormDialog.
                         }
                     });
                 } else{
+                    setupprofile();
                     runOnboarding(11);
                 }
             }
@@ -650,10 +652,20 @@ public class HomeActivity extends AppCompatActivity implements SimpleFormDialog.
         userRef.child("language").setValue(onboardinglang);
         userRef.child("location").setValue(onboardinglocation);
         userRef.child("bio").setValue(onboardingbio);
-        userRef.child("phone").setValue(onboardingphone);
+        if(!onboardingphone.isEmpty()) userRef.child("phone").setValue(onboardingphone);
         userRef.child("school").setValue(onboardingschoolid);
-
+        userRef.child("usertype").setValue(onboardingusertype);
+        userRef.child("pfpUrl").setValue("https://firebasestorage.googleapis.com/v0/b/android1920-2a174.appspot.com/o/profile_picture_basic.png?alt=media&token=8c0b083f-5b0b-4345-90f6-7440d05168a2");
         ProfileFragment.loadProfileInfo(getApplicationContext(), FirebaseAuth.getInstance().getUid().toString());
+
+
+        ChatSDK.currentUser().setAvatarURL("https://firebasestorage.googleapis.com/v0/b/android1920-2a174.appspot.com/o/profile_picture_basic.png?alt=media&token=8c0b083f-5b0b-4345-90f6-7440d05168a2");
+
+        DatabaseReference ref_chatprofile = FirebaseDatabase.getInstance().getReference().child("prod").child("users").child(FirebaseAuth.getInstance().getUid().toString()).child("meta");
+        ref_chatprofile.child("name").setValue(onboardingname);
+        ref_chatprofile.child("name-lowercase").setValue(onboardingname.toLowerCase());
+
+        ChatSDK.currentUser().update();
 
     }
     public List<Address> latLongToText(String schoolLocation){

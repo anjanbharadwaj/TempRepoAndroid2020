@@ -99,31 +99,7 @@ public class ProfileFragment extends Fragment {
         message.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                UserWrapper userWrapper = UserWrapper.initWithEntityId("6fUK6kwMf6ci0L8360NU8E1Ahoh1");
-//                userWrapper.metaOn();
-//                userWrapper.onlineOn();
-//                co.chatsdk.core.dao.User otherUser = userWrapper.getModel();//userWrapper.getModel();
-//
-//                ProgressDialog pd = new ProgressDialog(getContext());
-//                pd.show();
-//
-//                ChatSDK.thread().createThread("", otherUser, ChatSDK.currentUser())
-//                        .observeOn(AndroidSchedulers.mainThread())
-//                        .doFinally(() -> {
-//                            pd.dismiss();
-//                        })
-//                        .subscribe(thread -> {
-//                            ChatSDK.ui().startChatActivityForID(getContext(), thread.getEntityID());
-//                        }, throwable -> {
-//                            ToastHelper.show(getContext(), throwable.getLocalizedMessage());
-//                        });
 
-//                ^ above code is for starting a convo with a specific id
-
-
-
-
-//                ChatSDK.ui().startChatActivityForID(getContext(), "6fUK6kwMf6ci0L8360NU8E1Ahoh1");
                 ChatSDK.ui().startMainActivity(getContext());
             }
         });
@@ -185,7 +161,6 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                Log.e("change made", "change we need");
 //                User u = null;
                 User u = dataSnapshot.getValue(User.class);
                 if(u.pfpUrl!=null) {
@@ -205,55 +180,66 @@ public class ProfileFragment extends Fragment {
                 String bio = null;
                 try {
                     bio = u.bio;
-                    ProfileFragment.bio.setText(bio);
+                    if(!bio.isEmpty()) ProfileFragment.bio.setText(bio);
                 } catch (Exception e) {
                     ProfileFragment.bio.setText("");
                 }
                 String phone = null;
                 try {
                     phone = u.phone;
-                    ProfileFragment.phone.setText(phone);
-                    ProfileFragment.phoneLayout.setVisibility(View.VISIBLE);
+                    if(!phone.isEmpty()) {
+                        ProfileFragment.phone.setText(phone);
+                        ProfileFragment.phoneLayout.setVisibility(View.VISIBLE);
+                    } else ProfileFragment.phoneLayout.setVisibility(View.GONE);
+
                 } catch (Exception e) {
                     ProfileFragment.phoneLayout.setVisibility(View.GONE);
                 }
                 String email = null;
                 try {
                     email = u.email;
-                    ProfileFragment.email.setText(email);
-                    ProfileFragment.emailLayout.setVisibility(View.VISIBLE);
+                    if(!email.isEmpty()) {
+                        ProfileFragment.email.setText(email);
+                        ProfileFragment.emailLayout.setVisibility(View.VISIBLE);
+                    } else ProfileFragment.emailLayout.setVisibility(View.GONE);
                 } catch (Exception e) {
                     ProfileFragment.emailLayout.setVisibility(View.GONE);
                 }
                 String location = null;
                 try {
                     location = u.location;
-                    ProfileFragment.location.setText("From ");
-                    SpannableString locationBold = new SpannableString(location);
-                    locationBold.setSpan(new StyleSpan(Typeface.BOLD), 0, locationBold.length(), 0);
+                    if(!location.isEmpty() && !location.equals("-1")) {
+                        ProfileFragment.location.setText("From ");
+                        SpannableString locationBold = new SpannableString(location);
+                        locationBold.setSpan(new StyleSpan(Typeface.BOLD), 0, locationBold.length(), 0);
 
-                    ProfileFragment.location.append(locationBold);
-                    ProfileFragment.locationLayout.setVisibility(View.VISIBLE);
+                        ProfileFragment.location.append(locationBold);
+                        ProfileFragment.locationLayout.setVisibility(View.VISIBLE);
+                    } else ProfileFragment.locationLayout.setVisibility(View.GONE);
                 } catch (Exception e) {
                     ProfileFragment.locationLayout.setVisibility(View.GONE);
                 }
                 String language = null;
                 try {
                     language = u.language;
-                    ProfileFragment.language.setText("Speaks ");
-                    SpannableString languageBold =  new SpannableString(language);
-                    languageBold.setSpan(new StyleSpan(Typeface.BOLD), 0, languageBold.length(), 0);
+                    if(!language.isEmpty()) {
+                        ProfileFragment.language.setText("Speaks ");
+                        SpannableString languageBold = new SpannableString(language);
+                        languageBold.setSpan(new StyleSpan(Typeface.BOLD), 0, languageBold.length(), 0);
 
-                    ProfileFragment.language.append(languageBold);
-                    ProfileFragment.languageLayout.setVisibility(View.VISIBLE);
+                        ProfileFragment.language.append(languageBold);
+                        ProfileFragment.languageLayout.setVisibility(View.VISIBLE);
+                    } else ProfileFragment.languageLayout.setVisibility(View.GONE);
                 } catch (Exception e) {
                     ProfileFragment.languageLayout.setVisibility(View.GONE);
                 }
                 String school = null;
                 try {
                     school = u.school;
-                    getSchoolName(school);
-                    ProfileFragment.schoolLayout.setVisibility(View.VISIBLE);
+                    if(!school.isEmpty() && !school.equals("-1")) {
+                        getSchoolName(school);
+                        ProfileFragment.schoolLayout.setVisibility(View.VISIBLE);
+                    } else ProfileFragment.schoolLayout.setVisibility(View.GONE);
                 } catch (Exception e) {
                     ProfileFragment.schoolLayout.setVisibility(View.GONE);
                 }

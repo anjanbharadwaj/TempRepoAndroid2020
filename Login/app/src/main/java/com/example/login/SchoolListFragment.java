@@ -185,7 +185,7 @@ public class SchoolListFragment extends Fragment implements ObservableScrollView
                 School school = ds.getValue(School.class);
                 school.items.remove(0);
                 listOfSchools.add(school);
-                Log.e("School", school.toString());
+                Log.e("SchoolOnDataChange", school.toString());
             }
 
             showCards();
@@ -270,20 +270,37 @@ class SchoolAdapter extends RecyclerView.Adapter<SchoolAdapter.SchoolViewHolder>
 
         Geocoder geocoder = new Geocoder(SchoolListFragment.activity, Locale.getDefault());
         List<Address> addresses = null;
+        String cityName = "";
+        String countryName = "";
         try {
             addresses = geocoder.getFromLocation(latitude, longitude, 1);
-        } catch (IOException e) {
+             cityName = addresses.get(0).getLocality();
+//        String stateName = addresses.get(0).getAddressLine(1);
+             countryName = addresses.get(0).getCountryName();
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
-        String cityName = addresses.get(0).getLocality();
-//        String stateName = addresses.get(0).getAddressLine(1);
-        String countryName = addresses.get(0).getCountryName();
-
-        schoolViewHolder.location.setText(cityName + ", " + countryName);
+        String finAddress = "";
+        if(!cityName.isEmpty()){
+            finAddress = cityName;
+        }
+        if(!countryName.isEmpty()){
+            if(!cityName.isEmpty()){
+                finAddress += ", ";
+            };
+            finAddress += countryName;
+        }
+        schoolViewHolder.location.setText(finAddress);
         schoolViewHolder.description.setText(school.description);
-        schoolViewHolder.fundsRaised.setMax((int)school.totalMoney);
-        schoolViewHolder.fundsRaised.setProgress((int)school.raisedMoney);
+        if(school.totalMoney==null){
+            school.totalMoney="0";
+        }
+        if(school.raisedMoney==null){
+            school.raisedMoney="0";
+        }
+        schoolViewHolder.fundsRaised.setMax((int)Double.parseDouble(school.totalMoney));
+        schoolViewHolder.fundsRaised.setProgress((int)Double.parseDouble(school.raisedMoney));
 
         //Load the proper image into the imageView using the Glide framework
         Glide.with(schoolViewHolder.itemView)

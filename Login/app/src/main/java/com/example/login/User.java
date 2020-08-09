@@ -20,10 +20,11 @@ public class User {
     public String phone;
     public String school;
     public String pfpUrl;
+    public String usertype;
+
     public Map<String, Object> friendUIDs;
     public String uid;
-
-    public User(String name, String bio, String language, String location, String email, String phone, String school, String pfpUrl, Map<String, Object> friendUIDs) {
+    public User(String name, String bio, String language, String location, String email, String phone, String school, String pfpUrl, Map<String, Object> friendUIDs, String usertype) {
         this.name = name;
         this.bio = bio;
         this.language = language;
@@ -33,6 +34,7 @@ public class User {
         this.school = school;
         this.pfpUrl = pfpUrl;
         this.friendUIDs = friendUIDs;
+        this.usertype = usertype;
     }
     public User(User old){
         this.name = ""+old.name;
@@ -44,7 +46,7 @@ public class User {
         this.school = ""+old.school;
         this.pfpUrl = ""+old.pfpUrl;
         this.friendUIDs = old.friendUIDs;
-
+        this.usertype = old.usertype;
     }
     public User(Parcel parcel){
         this.name = parcel.readString();
@@ -56,6 +58,7 @@ public class User {
         this.school = parcel.readString();
         this.pfpUrl = parcel.readString();
         this.friendUIDs = parcel.readHashMap(String.class.getClassLoader());//new ArrayList<>();
+        this.usertype = parcel.readString();
     }
     public User(){
 
@@ -72,6 +75,7 @@ public class User {
                 ", school='" + school + '\'' +
                 ", pfpUrl='" + pfpUrl + '\'' +
                 ", friendUIDs='" + friendUIDs + '\'' +
+                ", usertype='" + usertype +
                 '}';
     }
 

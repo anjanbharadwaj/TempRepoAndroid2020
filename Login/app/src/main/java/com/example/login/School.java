@@ -14,17 +14,17 @@ public class School implements SearchSuggestion {
     public String name;
     public String imageUri;
     public String location;
-    public double raisedMoney;
-    public double totalMoney;
+    public String raisedMoney;
+    public String totalMoney;
     public String description;
     public String organizerID;
-
+    public String fundLink;
 
     public ArrayList<String> items;
     public School(){
 
     }
-    public School(String id, String name, String imageUri, String location, double raisedMoney, double totalMoney, String description, String organizerID, ArrayList<String> items) {
+    public School(String id, String name, String imageUri, String location, String raisedMoney, String totalMoney, String description, String organizerID, ArrayList<String> items, String fundLink) {
         this.id = id;
         this.name = name;
         this.imageUri = imageUri;
@@ -35,6 +35,7 @@ public class School implements SearchSuggestion {
         this.organizerID = organizerID;
         this.items = items;
         this.items.remove(0);
+        this.fundLink = fundLink;
     }
 
     public School(Parcel parcel){
@@ -42,16 +43,17 @@ public class School implements SearchSuggestion {
         this.name = parcel.readString();
         this.imageUri = parcel.readString();
         this.location = parcel.readString();
-        this.raisedMoney = parcel.readDouble();
-        this.totalMoney = parcel.readDouble();
+        this.raisedMoney = parcel.readString();
+        this.totalMoney = parcel.readString();
         this.description = parcel.readString();
         this.organizerID = parcel.readString();
         this.items = parcel.readArrayList(String.class.getClassLoader());//new ArrayList<>();
+        this.fundLink = parcel.readString();
 //        if(this.items!=null) this.items.remove(0);
     }
     public String toString() {
 
-        return id + " " + name + " " + imageUri+ " " +location+ " " +raisedMoney+ " " +totalMoney+ " " +description+ " " +organizerID+ " " +items.toString() ;
+        return id + " " + name + " " + imageUri+ " " +location+ " " +raisedMoney+ " " +totalMoney+ " " +description+ " " +organizerID+ " " +items.toString() + " " + fundLink;
     }
 
     public static final Parcelable.Creator<School> CREATOR = new Parcelable.Creator<School>() {
@@ -91,11 +93,12 @@ public class School implements SearchSuggestion {
         dest.writeString(name);
         dest.writeString(imageUri);
         dest.writeString(location);
-        dest.writeDouble(raisedMoney);
-        dest.writeDouble(totalMoney);
+        dest.writeString(raisedMoney);
+        dest.writeString(totalMoney);
         dest.writeString(description);
         dest.writeString(organizerID);
         dest.writeList(items);//.writeStringList(items);
+        dest.writeString(fundLink);
     }
 
     //Required field for the interface to be able to create a new School object from a passed in parcel

@@ -20,6 +20,7 @@ public class UserSearchable extends User implements SearchSuggestion {
         this.pfpUrl = ""+user.pfpUrl;
         this.friendUIDs = user.friendUIDs;
         this.uid = user.uid;
+        this.usertype = user.usertype;
     }
     public UserSearchable(Parcel parcel){
         this.name = parcel.readString();
@@ -32,6 +33,7 @@ public class UserSearchable extends User implements SearchSuggestion {
         this.pfpUrl = parcel.readString();
         this.friendUIDs = parcel.readHashMap(String.class.getClassLoader());//new ArrayList<>();
         this.uid = parcel.readString();
+        this.usertype = parcel.readString();
     }
     @Override
     public String getBody() {
@@ -55,6 +57,7 @@ public class UserSearchable extends User implements SearchSuggestion {
         dest.writeString(pfpUrl);
         dest.writeMap(friendUIDs);
         dest.writeString(uid);
+        dest.writeString(usertype);
 
     }
     @Override
@@ -70,6 +73,7 @@ public class UserSearchable extends User implements SearchSuggestion {
                 ", pfpUrl='" + pfpUrl + '\'' +
                 ", friendUIDs='" + friendUIDs + '\'' +
                 ", uid='" + uid + '\'' +
+                ", uid='" + usertype +
                 '}';
     }
 
