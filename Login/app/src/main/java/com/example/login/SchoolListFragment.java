@@ -274,9 +274,15 @@ class SchoolAdapter extends RecyclerView.Adapter<SchoolAdapter.SchoolViewHolder>
         String countryName = "";
         try {
             addresses = geocoder.getFromLocation(latitude, longitude, 1);
-             cityName = addresses.get(0).getLocality();
+            cityName = addresses.get(0).getLocality();
+            if(cityName==null){
+                cityName = "";
+            }
 //        String stateName = addresses.get(0).getAddressLine(1);
              countryName = addresses.get(0).getCountryName();
+            if(countryName==null){
+                countryName = "";
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -285,7 +291,7 @@ class SchoolAdapter extends RecyclerView.Adapter<SchoolAdapter.SchoolViewHolder>
         if(!cityName.isEmpty()){
             finAddress = cityName;
         }
-        if(!countryName.isEmpty()){
+        if(countryName != null && !countryName.isEmpty()){
             if(!cityName.isEmpty()){
                 finAddress += ", ";
             };

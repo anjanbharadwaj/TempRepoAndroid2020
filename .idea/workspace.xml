@@ -2,11 +2,29 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="ccbea388-52b1-4632-8e95-ad5c341853c9" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/Login/app/src/main/java/com/example/login/FavoritesFragment.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Login/app/src/main/res/layout/fragment_favorites.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Login/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/Login/app/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Login/app/src/main/res/layout/school_card.xml" beforeDir="false" afterPath="$PROJECT_DIR$/Login/app/src/main/res/layout/school_card.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Login/app/src/main/java/com/example/login/CropActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/Login/app/src/main/java/com/example/login/CropActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Login/app/src/main/java/com/example/login/EditProfileActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/Login/app/src/main/java/com/example/login/EditProfileActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Login/app/src/main/java/com/example/login/HomeActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/Login/app/src/main/java/com/example/login/HomeActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Login/app/src/main/java/com/example/login/IntroActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/Login/app/src/main/java/com/example/login/IntroActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Login/app/src/main/java/com/example/login/MainActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/Login/app/src/main/java/com/example/login/MainActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Login/app/src/main/java/com/example/login/MyContactsFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/Login/app/src/main/java/com/example/login/MyContactsFragment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Login/app/src/main/java/com/example/login/ProfileFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/Login/app/src/main/java/com/example/login/ProfileFragment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Login/app/src/main/java/com/example/login/School.java" beforeDir="false" afterPath="$PROJECT_DIR$/Login/app/src/main/java/com/example/login/School.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Login/app/src/main/java/com/example/login/SchoolInfoActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/Login/app/src/main/java/com/example/login/SchoolInfoActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Login/app/src/main/java/com/example/login/SchoolListFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/Login/app/src/main/java/com/example/login/SchoolListFragment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Login/app/src/main/java/com/example/login/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/Login/app/src/main/java/com/example/login/User.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Login/app/src/main/java/com/example/login/UserSearchable.java" beforeDir="false" afterPath="$PROJECT_DIR$/Login/app/src/main/java/com/example/login/UserSearchable.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Login/app/src/main/java/com/example/login/ViewOtherProfileActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/Login/app/src/main/java/com/example/login/ViewOtherProfileActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Login/app/src/main/res/layout/activity_main_start.xml" beforeDir="false" afterPath="$PROJECT_DIR$/Login/app/src/main/res/layout/activity_main_start.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Login/app/src/main/res/layout/fragment_my_contacts.xml" beforeDir="false" afterPath="$PROJECT_DIR$/Login/app/src/main/res/layout/fragment_my_contacts.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Login/app/src/main/res/values/colors.xml" beforeDir="false" afterPath="$PROJECT_DIR$/Login/app/src/main/res/values/colors.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Login/app/src/main/res/values/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/Login/app/src/main/res/values/strings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Login/app/src/main/res/values/styles.xml" beforeDir="false" afterPath="$PROJECT_DIR$/Login/app/src/main/res/values/styles.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Login/settings.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/Login/settings.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Test 2.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Test.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Test1.txt" beforeDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -21,7 +39,7 @@
     <option name="x" value="12" />
     <option name="y" value="23" />
     <option name="width" value="1524" />
-    <option name="height" value="881" />
+    <option name="height" value="867" />
   </component>
   <component name="ProjectView">
     <navigator currentView="ProjectPane" proportions="" version="1">
@@ -29,23 +47,23 @@
     </navigator>
     <panes>
       <pane id="Scope" />
-      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
             <path>
-              <item name="Login_Registration_Android_2019-master" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Login_Registration_Android_2019-master" type="462c0819:PsiDirectoryNode" />
+              <item name="OneSharedSchool" type="b2602c69:ProjectViewProjectNode" />
+              <item name="OneSharedSchool" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
-              <item name="Login_Registration_Android_2019-master" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Login_Registration_Android_2019-master" type="462c0819:PsiDirectoryNode" />
+              <item name="OneSharedSchool" type="b2602c69:ProjectViewProjectNode" />
+              <item name="OneSharedSchool" type="462c0819:PsiDirectoryNode" />
               <item name="Login" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
+      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -78,7 +96,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="12" y="23" width="1524" height="881" extended-state="0" />
+    <frame x="12" y="23" width="1524" height="867" extended-state="0" />
     <layout>
       <window_info id="Captures" order="0" weight="0.25" />
       <window_info active="true" content_ui="combo" id="Project" order="1" visible="true" weight="0.30272788" />

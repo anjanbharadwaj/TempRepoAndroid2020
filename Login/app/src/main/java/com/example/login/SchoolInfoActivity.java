@@ -186,8 +186,14 @@ public class SchoolInfoActivity extends SlidingActivity implements SimpleDialog.
                 try {
                     addresses = geocoder.getFromLocation(latitude, longitude, 1);
                     cityName = addresses.get(0).getLocality();
+                    if(cityName==null){
+                        cityName = "";
+                    }
 //        String stateName = addresses.get(0).getAddressLine(1);
                     countryName = addresses.get(0).getCountryName();
+                    if(countryName==null){
+                        countryName = "";
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
