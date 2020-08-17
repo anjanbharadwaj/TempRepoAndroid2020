@@ -53,7 +53,7 @@ public class School implements SearchSuggestion {
     }
     public String toString() {
 
-        return id + " " + name + " " + imageUri+ " " +location+ " " +raisedMoney+ " " +totalMoney+ " " +description+ " " +organizerID+ " " +items.toString() + " " + fundLink;
+        return id + " " + name + " " + imageUri+ " " +location+ " r " +raisedMoney+ " t " +totalMoney+ " " +description+ " " +organizerID+ " " +items.toString() + " " + fundLink;
     }
 
     public static final Parcelable.Creator<School> CREATOR = new Parcelable.Creator<School>() {

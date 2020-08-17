@@ -1,8 +1,11 @@
 package com.example.login;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 
 import co.chatsdk.core.utils.Strings;
 import co.chatsdk.ui.chat.ChatActivity;
@@ -14,6 +17,7 @@ public class CustomChatActivity extends ChatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_custom_chat);
+
     }
 
     @Override
@@ -24,4 +28,6 @@ public class CustomChatActivity extends ChatActivity {
         titleTextView.setText(displayName);
         ThreadImageBuilder.load(threadImageView, thread);
     }
+
+
 }

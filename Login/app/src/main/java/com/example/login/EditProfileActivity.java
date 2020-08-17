@@ -68,6 +68,10 @@ import eltos.simpledialogfragment.form.Input;
 import eltos.simpledialogfragment.form.SimpleFormDialog;
 import eltos.simpledialogfragment.input.SimpleInputDialog;
 import android.os.Vibrator;
+import android.widget.Toast;
+
+import static android.widget.Toast.LENGTH_LONG;
+import static java.lang.Character.isLetter;
 
 public class EditProfileActivity extends AppCompatActivity implements IPickResult, SimpleDialog.OnDialogResultListener{
     final String SCHOOL_REGISTRATION_DIALOG = "school registration";
@@ -339,9 +343,19 @@ public class EditProfileActivity extends AppCompatActivity implements IPickResul
         String language = spinnerLang.getSelectedItem().toString();
 
         boolean nameChanged = false;
-        if(!u.name.equals(nameText)) {
+        boolean invalidName=false;
+        for(int i=0; i<nameText.length(); i++){
+            if(!isLetter(nameText.charAt(i))){
+                invalidName = true;
+            }
+        }
+        if(!invalidName && !u.name.equals(nameText)) {
             u.name = nameText;
             nameChanged = true;
+        }
+        if(invalidName){
+            Toast.makeText(this, "Name can only contain letters", LENGTH_LONG).show();
+
         }
         u.bio = bioText;
         u.phone = phoneText;
@@ -363,7 +377,9 @@ public class EditProfileActivity extends AppCompatActivity implements IPickResul
 
         changeChatSDK(nameChanged, pfpChanged);
         progressBar.setVisibility(View.GONE);
-        finish();
+        if(!invalidName) {
+            finish();
+        }
 
     }
 

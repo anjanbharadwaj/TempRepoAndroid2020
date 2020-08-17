@@ -1,5 +1,6 @@
 package com.example.login;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -100,7 +101,10 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-                ChatSDK.ui().startMainActivity(getContext());
+                //ChatSDK.ui().startMainActivity(getContext());
+
+                Class a = ChatSDK.ui().getMainActivity();
+                startActivity(new Intent(getContext(), a));
             }
         });
         editProfile = view.findViewById(R.id.edit_or_add_button);
@@ -299,4 +303,6 @@ public class ProfileFragment extends Fragment {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
+
+
 }

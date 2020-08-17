@@ -282,25 +282,28 @@ class SchoolAdapter extends RecyclerView.Adapter<SchoolAdapter.SchoolViewHolder>
         }
 
         String finAddress = "";
-        if(!cityName.isEmpty()){
+        if(cityName!=null && !cityName.isEmpty()){
             finAddress = cityName;
         }
-        if(!countryName.isEmpty()){
-            if(!cityName.isEmpty()){
+        if(countryName!=null && !countryName.isEmpty()){
+            if(cityName!=null && !cityName.isEmpty()){
                 finAddress += ", ";
             };
             finAddress += countryName;
         }
         schoolViewHolder.location.setText(finAddress);
         schoolViewHolder.description.setText(school.description);
-        if(school.totalMoney==null){
+        if(school.totalMoney==null || school.totalMoney.isEmpty()){
             school.totalMoney="0";
         }
-        if(school.raisedMoney==null){
+        if(school.raisedMoney==null || school.raisedMoney.isEmpty()){
             school.raisedMoney="0";
         }
-        schoolViewHolder.fundsRaised.setMax((int)Double.parseDouble(school.totalMoney));
-        schoolViewHolder.fundsRaised.setProgress((int)Double.parseDouble(school.raisedMoney));
+        if (school.totalMoney != null) {
+            schoolViewHolder.fundsRaised.setMax((int)Double.parseDouble(school.totalMoney));
+            schoolViewHolder.fundsRaised.setProgress((int)Double.parseDouble(school.raisedMoney));
+        }
+
 
         //Load the proper image into the imageView using the Glide framework
         Glide.with(schoolViewHolder.itemView)
@@ -339,6 +342,10 @@ class SchoolAdapter extends RecyclerView.Adapter<SchoolAdapter.SchoolViewHolder>
             fundsRaised = (ProgressBar)     v.findViewById(R.id.schoolFundsRaised);
             schoolImage = (ImageView)     v.findViewById(R.id.schoolImageView);
 
+            /*int cardW = cardView.getWidth();
+            Log.e("cardview width:", ""+cardW);
+            description.setWidth((int)(cardW*0.2));
+            schoolImage.setMaxWidth((int)(cardW*0.2)); */
             this.mListener = mListener;
             v.setOnClickListener(this);
         }
