@@ -1,7 +1,7 @@
 # OneSharedSchool - Android
 
 # Overview
-This Android application is a joint project between Tinovation and OneSharedSchool. The project is currently a work-in-progress and is in the process of being alpha tested to detect bugs and crashes. Check back later for a more complete final product! 
+This Android application is a joint project between Tinovation and OneSharedSchool. The project is currently a work-in-progress and is in the process of being alpha tested to detect bugs and crashes. The website portion of the project can be found here: https://github.com/OneSharedSchool-Web/onesharedschool-web.github.io. Check back later for a more complete final product! 
 Reach out to tinovationofficerteam@gmail.com if you're a Tinovation member, OneSharedSchool volunteer, or anyone else who has questions about the application!
 
 # Instructions
